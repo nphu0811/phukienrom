@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Giỏ hàng | Phụ Kiện Rơm</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <style>
+        /* Cart page polish (no inline styles on elements) */
+        .page-shell { padding: 32px 0 48px; }
+        .cart-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
+        .cart-title { display: flex; flex-direction: column; gap: 6px; }
+        .cart-title .eyebrow { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); font-weight: 700; }
+        .cart-title h1 { font-size: 32px; line-height: 1.2; font-weight: 800; color: var(--secondary); }
+        .cart-title p { color: var(--text-muted); font-size: 15px; }
+        .cart-hero {
+            width: 100%;
+            background: linear-gradient(120deg, #1a1a2e 0%, #3b1c32 50%, #e30019 100%);
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: 20px 24px;
+            box-shadow: var(--shadow-lg);
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            gap: 16px;
+        }
+        .hero-copy { display: flex; flex-direction: column; gap: 8px; }
+        .hero-copy h2 { font-size: 24px; line-height: 1.25; font-weight: 700; }
+        .hero-copy span { color: rgba(255,255,255,.85); font-size: 14px; }
+        .hero-cta { display: flex; gap: 10px; flex-wrap: wrap; }
+        .hero-pill { background: rgba(255,255,255,.14); color: white; border-radius: 999px; padding: 8px 14px; font-weight: 600; font-size: 13px; letter-spacing: .02em; }
+        .page-heading { margin-bottom: 16px; }
+        .empty-illustration {
+            width: 80px; height: 80px; border-radius: 50%;
+            display: inline-flex; align-items: center; justify-content: center;
+            background: var(--primary-light); color: var(--primary); margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .empty-illustration svg { width: 36px; height: 36px; }
+        .summary-note { font-size: 12px; color: var(--text-muted); margin-top: 8px; text-align: center; }
+        @media (max-width: 768px) {
+            .page-shell { padding: 20px 0 32px; }
+            .cart-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .cart-title h1 { font-size: 26px; }
+            .cart-hero { grid-template-columns: 1fr; align-items: flex-start; }
+            .hero-cta { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{layout :: navbar}"></div>
+
+<main class="container page-shell">
+    <header class="cart-header">
+        <div class="cart-title">
+            <span class="eyebrow">Giỏ hàng</span>
+            <h1>Giữ nhịp mua sắm, hoàn tất đơn ngay</h1>
+            <p>Kiểm tra lại sản phẩm, áp mã và về đích trong vài giây.</p>
+        </div>
+        <div class="cart-hero">
+            <div class="hero-copy">
+                <h2>Miễn phí vận chuyển cho đơn từ 500.000₫</h2>
+                <span>Tặng kèm gói bọc chống sốc + hỗ trợ đổi trả 7 ngày.</span>
+                <div class="hero-cta">
+                    <span class="hero-pill">Ưu đãi hôm nay</span>
+                    <span class="hero-pill">Thời gian xử lý: 24h</span>
+                </div>
+            </div>
+            <a th:href="@{/products}" class="btn btn-white btn-lg">Thêm sản phẩm</a>
+        </div>
+    </header>
+
+    <!-- Empty cart -->
+    <div th:if="${cart == null or cart.items.isEmpty()}" class="empty-cart">
+        <div class="empty-illustration">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 6h15l-1.5 9h-12z"></path>
+                <path d="M6 6l-1-3H2"></path>
+                <circle cx="9" cy="19" r="1.2"></circle>
+                <circle cx="17" cy="19" r="1.2"></circle>
+            </svg>
+        </div>
+        <h2>Giỏ hàng trống</h2>
+        <p>Khám phá ưu đãi và thêm sản phẩm ngay bây giờ.</p>
+        <a th:href="@{/products}" class="btn btn-primary btn-lg">Tiếp tục mua sắm</a>
+    </div>
+
+    <!-- Cart with items -->
+    <div th:unless="${cart == null or cart.items.isEmpty()}" class="cart-layout">
+
+        <!-- Items table -->
+        <div class="cart-items">
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Đơn giá</th>
+                        <th>Số lượng</th>
+                        <th>Thành tiền</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="item : ${cart.items}" th:id="'item-' + ${item.id}">
+                        <td class="item-info">
+                            <img th:src="${item.productImage}" th:alt="${item.productName}"
+                                 class="cart-item-img">
+                            <div>
+                                <a th:href="@{/products/{slug}(slug=${item.productSlug})}"
+                                   th:text="${item.productName}" class="item-name"></a>
+                                <p class="item-variant" th:text="${item.variantInfo}"></p>
+                                <p th:if="${item.availableStock < 5 and item.availableStock > 0}"
+                                   class="low-stock-warning">
+                                    Cảnh báo: Chỉ còn <span th:text="${item.availableStock}"></span> sản phẩm
+                                </p>
+                                <p th:if="${item.availableStock == 0}" class="out-of-stock-warning">
+                                    Sản phẩm đã hết hàng
+                                </p>
+                            </div>
+                        </td>
+                        <td class="item-price"
+                            th:text="${#numbers.formatDecimal(item.unitPrice, 0, 'COMMA', 0, 'POINT') + '₫'}">
+                        </td>
+                        <td class="item-qty">
+                            <div class="qty-control">
+                                <button class="qty-btn"
+                                        th:attr="onclick='updateQty(' + ${item.id} + ', ' + (${item.quantity} - 1) + ')'">
+                                    −
+                                </button>
+                                <span th:text="${item.quantity}" class="qty-display"></span>
+                                <button class="qty-btn"
+                                        th:attr="onclick='updateQty(' + ${item.id} + ', ' + (${item.quantity} + 1) + ')'">
+                                    +
+                                </button>
+                            </div>
+                        </td>
+                        <td class="item-subtotal"
+                            th:text="${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT') + '₫'}">
+                        </td>
+                        <td>
+                            <button class="btn-remove"
+                                    th:attr="onclick='removeItem(' + ${item.id} + ')'">✕</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Order summary sidebar -->
+        <div class="cart-summary">
+            <h3>Tóm tắt đơn hàng</h3>
+
+            <!-- Coupon -->
+            <div class="coupon-box">
+                <input type="text" id="couponInput" placeholder="Nhập mã giảm giá" class="coupon-input">
+                <button onclick="applyCoupon()" class="btn btn-outline">Áp dụng</button>
+                <p id="couponMsg" class="coupon-msg"></p>
+            </div>
+
+            <div class="summary-rows">
+                <div class="summary-row">
+                    <span>Tạm tính (<span th:text="${cart.totalItems}">0</span> sản phẩm)</span>
+                    <span id="subtotal"
+                          th:text="${#numbers.formatDecimal(cart.totalAmount, 0, 'COMMA', 0, 'POINT') + '₫'}">
+                    </span>
+                </div>
+                <div class="summary-row">
+                    <span>Phí vận chuyển</span>
+                    <span id="shippingFee" th:text="${cart.totalAmount >= 500000 ? 'Miễn phí' : '30.000₫'}"></span>
+                </div>
+                <div class="summary-row discount-row hidden" id="discountRow">
+                    <span>Giảm giá</span>
+                    <span id="discountAmount" class="text-success">-0₫</span>
+                </div>
+                <hr>
+                <div class="summary-row total-row">
+                    <strong>Tổng cộng</strong>
+                    <strong id="totalAmount"
+                            th:text="${#numbers.formatDecimal(cart.totalAmount, 0, 'COMMA', 0, 'POINT') + '₫'}">
+                    </strong>
+                </div>
+            </div>
+
+            <a th:href="@{/checkout}" class="btn btn-primary btn-lg btn-block">
+                Tiến hành thanh toán →
+            </a>
+            <a th:href="@{/products}" class="btn btn-outline btn-block">← Tiếp tục mua sắm</a>
+            <div class="summary-note">Thanh toán bảo mật • Hỗ trợ 24/7 • Đổi trả 7 ngày</div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{layout :: footer}"></div>
+
+<script>
+const token = localStorage.getItem('jwt_token');
+
+async function updateQty(itemId, newQty) {
+    if (newQty < 0) return;
+    const res = await fetch(`/api/cart/items/${itemId}?quantity=${newQty}`, {
+        method: 'PUT',
+        headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (res.ok) location.reload();
+    else {
+        const data = await res.json();
+        showToast(data.message, 'error');
+    }
+}
+
+async function removeItem(itemId) {
+    if (!confirm('Xóa sản phẩm này khỏi giỏ hàng?')) return;
+    const res = await fetch(`/api/cart/items/${itemId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (res.ok) location.reload();
+}
+
+async function applyCoupon() {
+    const code = document.getElementById('couponInput').value.trim();
+    if (!code) return;
+    // Preview coupon — actual validation happens at checkout
+    document.getElementById('couponMsg').textContent = '✅ Mã đã được ghi nhận, áp dụng khi thanh toán';
+    sessionStorage.setItem('couponCode', code);
+}
+</script>
+<script th:src="@{/js/main.v2.js}"></script>
+</body>
+</html>

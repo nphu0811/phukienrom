@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle != null ? pageTitle + ' | Phụ Kiện Rom' : 'Phụ Kiện Rom - Điện thoại & Phụ kiện'}">Phụ Kiện Rom</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar" th:fragment="navbar">
+    <div class="container">
+        <a th:href="@{/}" class="navbar-brand">
+            <svg class="logo-fallback" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                <rect width="32" height="32" rx="6" fill="#e30019"/>
+                <rect x="10" y="6" width="12" height="20" rx="3" fill="white" opacity=".9"/>
+                <rect x="13" y="22" width="6" height="1.5" rx=".75" fill="#e30019"/>
+                <circle cx="16" cy="8.5" r="1" fill="#e30019"/>
+            </svg>
+            <span>Phụ Kiện Rom</span>
+        </a>
+
+        <!-- Search bar (desktop) -->
+        <form class="search-form" th:action="@{/products}" method="get" id="desktopSearch">
+            <input type="text" name="keyword" th:value="${keyword}"
+                   placeholder="Tìm kiếm điện thoại, phụ kiện..." class="search-input">
+            <button type="submit" class="search-btn" aria-label="Tìm kiếm">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+            </button>
+        </form>
+        <!-- Search toggle (mobile only) -->
+        <button class="search-toggle" id="searchToggle" aria-label="Mở tìm kiếm" onclick="toggleMobileSearch()">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+        </button>
+
+        <!-- Nav links -->
+        <div class="nav-links">
+            <a th:href="@{/products}" class="nav-link">Sản phẩm</a>
+
+            <!-- Auth links -->
+            <div sec:authorize="isAnonymous()" class="nav-actions">
+                <a th:href="@{/auth/login}" class="btn btn-outline">Đăng nhập</a>
+                <a th:href="@{/auth/register}" class="btn btn-primary">Đăng ký</a>
+            </div>
+
+            <div sec:authorize="isAuthenticated()" class="user-menu">
+                <!-- Cart icon -->
+                <a th:href="@{/cart}" class="cart-icon" aria-label="Giỏ hàng">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                    <span class="cart-badge" id="cartCount" th:text="${cartCount ?: 0}">0</span>
+                </a>
+
+                <!-- User dropdown -->
+                <div class="dropdown">
+                    <button class="dropdown-toggle" id="userMenuBtn" onclick="toggleDropdown()" aria-expanded="false">
+                        <span sec:authentication="name">User</span>
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2 4l4 4 4-4"/></svg>
+                    </button>
+                    <div class="dropdown-menu" id="userDropdown">
+                        <a th:href="@{/account/profile}">Tài khoản</a>
+                        <a th:href="@{/account/orders}">Đơn hàng</a>
+                        <a th:href="@{/account/wishlist}">Yêu thích</a>
+                        <div sec:authorize="hasRole('ADMIN')">
+                            <a th:href="@{/admin}">Quản trị</a>
+                        </div>
+                        <div sec:authorize="hasRole('STAFF')">
+                            <a th:href="@{/staff}">Nhân viên</a>
+                        </div>
+                        <hr>
+                        <a th:href="@{/auth/logout}" onclick="logout(); return false;">Đăng xuất</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile search overlay -->
+    <div class="search-overlay" id="mobileSearchOverlay">
+        <form th:action="@{/products}" method="get" class="search-overlay-form">
+            <input type="text" name="keyword" th:value="${keyword}"
+                   placeholder="Tìm kiếm..." class="search-input" id="mobileSearchInput" autocomplete="off">
+            <button type="submit" class="search-btn" aria-label="Tìm kiếm">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+            </button>
+        </form>
+        <button class="search-overlay-close" onclick="toggleMobileSearch()" aria-label="Đóng">×</button>
+    </div>
+
+    <!-- Category nav -->
+    <div class="category-nav">
+        <div class="container">
+            <a th:href="@{/products(category='dien-thoai')}" class="cat-link">Điện thoại</a>
+            <a th:href="@{/products(category='may-tinh-bang')}" class="cat-link">Máy tính bảng</a>
+            <a th:href="@{/products(category='tai-nghe')}" class="cat-link">Tai nghe</a>
+            <a th:href="@{/products(category='sac-du-phong')}" class="cat-link">Sạc & Pin</a>
+            <a th:href="@{/products(category='op-lung')}" class="cat-link">Ốp lưng</a>
+            <a th:href="@{/products(category='phu-kien')}" class="cat-link">Phụ kiện khác</a>
+        </div>
+    </div>
+</nav>
+<script>
+function toggleDropdown() {
+    const menu = document.getElementById('userDropdown');
+    const btn  = document.getElementById('userMenuBtn');
+    if (!menu) return;
+    const isOpen = menu.classList.contains('open');
+    menu.classList.toggle('open', !isOpen);
+    btn.setAttribute('aria-expanded', (!isOpen).toString());
+}
+document.addEventListener('click', function(e) {
+    const menu = document.getElementById('userDropdown');
+    const btn  = document.getElementById('userMenuBtn');
+    if (menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+    }
+});
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const menu = document.getElementById('userDropdown');
+        const btn  = document.getElementById('userMenuBtn');
+        if (menu && menu.classList.contains('open')) {
+            menu.classList.remove('open');
+            btn.setAttribute('aria-expanded', 'false');
+            btn.focus();
+        }
+        const overlay = document.getElementById('mobileSearchOverlay');
+        if (overlay && overlay.classList.contains('open')) toggleMobileSearch();
+    }
+});
+function toggleMobileSearch() {
+    const overlay = document.getElementById('mobileSearchOverlay');
+    if (!overlay) return;
+    const open = overlay.classList.toggle('open');
+    if (open) {
+        setTimeout(() => document.getElementById('mobileSearchInput')?.focus(), 50);
+    }
+}
+function setLoading(btn, loading) {
+    if (!btn) return;
+    if (loading) {
+        btn._originalText = btn.innerHTML;
+        btn.classList.add('btn-loading');
+        btn.disabled = true;
+    } else {
+        btn.classList.remove('btn-loading');
+        btn.disabled = false;
+        if (btn._originalText) btn.innerHTML = btn._originalText;
+    }
+}
+</script>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+    <div th:if="${successMsg}" class="alert alert-success container" th:text="${successMsg}"></div>
+    <div th:if="${errorMsg}" class="alert alert-error container" th:text="${errorMsg}"></div>
+    <div th:replace="${content}"></div>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer" th:fragment="footer">
+    <div class="container footer-grid">
+        <div class="footer-col">
+            <h4>Phụ Kiện Rom</h4>
+            <p>Chuyên phân phối điện thoại và phụ kiện chính hãng tại Việt Nam.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Hỗ trợ</h4>
+            <a th:href="@{/pages/chinh-sach-bao-hanh}">Chính sách bảo hành</a>
+            <a th:href="@{/pages/chinh-sach-doi-tra}">Đổi trả</a>
+            <a th:href="@{/pages/huong-dan-mua-hang}">Hướng dẫn mua hàng</a>
+        </div>
+        <div class="footer-col">
+            <h4>Liên hệ</h4>
+            <p>Hotline: 1800 xxxx</p>
+            <p>Email: support@phukienrom.com</p>
+            <p>Giờ làm việc: 8:00 - 22:00 mỗi ngày</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2024 Phụ Kiện Rom. All rights reserved.</p>
+    </div>
+</footer>
+
+<script th:src="@{/js/main.v2.js}"></script>
+</body>
+</html>

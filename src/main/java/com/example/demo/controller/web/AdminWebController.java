@@ -1,0 +1,72 @@
+package com.example.demo.controller.web;
+import com.example.demo.domain.enums.OrderStatus;
+import com.example.demo.repository.*;
+import com.example.demo.service.OrderService;
+import com.example.demo.service.ProductService;
+import org.springframework.data.domain.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import java.time.LocalDateTime;
+
+@Controller
+@RequestMapping("/admin")
+@PreAuthorize("hasRole('ADMIN')")
+public class AdminWebController {
+    private final OrderRepository orderRepository;
+    private final ProductRepository productRepository;
+    private final UserRepository userRepository;
+    private final OrderService orderService;
+    private final ProductService productService;
+
+    public AdminWebController(OrderRepository orderRepository, ProductRepository productRepository,
+                               UserRepository userRepository, OrderService orderService, ProductService productService) {
+        this.orderRepository = orderRepository; this.productRepository = productRepository;
+        this.userRepository = userRepository; this.orderService = orderService; this.productService = productService;
+    }
+
+    @GetMapping({"", "/"})
+    public String dashboard(Model model) {
+        LocalDateTime startOfMonth = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+        model.addAttribute("revenueThisMonth", orderRepository.getTotalRevenue(startOfMonth, LocalDateTime.now()));
+        model.addAttribute("pendingOrders", orderRepository.countByStatus(OrderStatus.PENDING));
+        model.addAttribute("totalProducts", productRepository.count());
+        model.addAttribute("totalUsers", userRepository.count());
+        model.addAttribute("recentOrders", orderService.getAllOrders(null, PageRequest.of(0, 10, Sort.by("createdAt").descending())));
+        model.addAttribute("topSelling", productService.getTopSelling(5));
+        model.addAttribute("pageTitle", "Dashboard Quản trị");
+        return "admin/dashboard";
+    }
+
+    @GetMapping("/products")
+    public String products(@RequestParam(required = false) String keyword,
+                            @RequestParam(defaultValue = "0") int page, Model model) {
+        Pageable pageable = PageRequest.of(page, 20, Sort.unsorted());
+        model.addAttribute("products", productService.getProducts(null, null, null, null, keyword, pageable));
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("pageTitle", "Quản lý sản phẩm");
+        return "admin/products";
+    }
+
+    @GetMapping("/orders")
+    public String orders(@RequestParam(required = false) OrderStatus status,
+                          @RequestParam(defaultValue = "0") int page, Model model) {
+        Pageable pageable = PageRequest.of(page, 20, Sort.by("createdAt").descending());
+        model.addAttribute("orders", orderService.getAllOrders(status, pageable));
+        model.addAttribute("status", status);
+        model.addAttribute("pageTitle", "Quản lý đơn hàng");
+        return "admin/orders";
+    }
+
+    @GetMapping("/users")
+    public String users(@RequestParam(required = false) String keyword,
+                         @RequestParam(defaultValue = "0") int page, Model model) {
+        Pageable pageable = PageRequest.of(page, 20, Sort.unsorted());
+        String keywordParam = (keyword == null || keyword.isBlank()) ? null : "%" + keyword.toLowerCase() + "%";
+        model.addAttribute("users", userRepository.searchUsers(keywordParam, pageable));
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("pageTitle", "Quản lý người dùng");
+        return "admin/users";
+    }
+}

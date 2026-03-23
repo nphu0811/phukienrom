@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${pageTitle ?: 'Sản phẩm'} + ' | Phụ Kiện Rom'">Sản phẩm</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+<div th:replace="~{layout :: navbar}"></div>
+
+<main class="container page-shell">
+    <div class="page-layout">
+
+        <!-- FILTER SIDEBAR -->
+        <aside class="filter-sidebar">
+            <form id="filterForm" th:action="@{/products}" method="get" onchange="this.submit()">
+                <input type="hidden" name="keyword" th:value="${keyword}">
+
+                <div class="filter-group">
+                    <h4 class="filter-title">Danh mục</h4>
+                    <div th:each="cat : ${categories}" class="filter-item">
+                        <label>
+                            <input type="radio" name="category" th:value="${cat.slug}"
+                                   th:checked="${category == cat.slug}">
+                            <span th:text="${cat.name}">Điện thoại</span>
+                        </label>
+                    </div>
+                    <label class="filter-item">
+                        <input type="radio" name="category" value="" th:checked="${category == null}">
+                        <span>Tất cả</span>
+                    </label>
+                </div>
+
+                <div class="filter-group">
+                    <h4 class="filter-title">Thương hiệu</h4>
+                    <div th:each="b : ${brands}" class="filter-item">
+                        <label>
+                            <input type="radio" name="brand" th:value="${b.slug}"
+                                   th:checked="${brand == b.slug}">
+                            <span th:text="${b.name}">Apple</span>
+                        </label>
+                    </div>
+                    <label class="filter-item">
+                        <input type="radio" name="brand" value="" th:checked="${brand == null}">
+                        <span>Tất cả</span>
+                    </label>
+                </div>
+
+                <div class="filter-group">
+                    <h4 class="filter-title">Khoảng giá</h4>
+                    <div class="price-ranges">
+                        <label><input type="radio" name="priceRange" value="" th:checked="${priceRange == null}"> Tất cả</label>
+                        <label><input type="radio" name="priceRange" value="0-3000000" th:checked="${priceRange == '0-3000000'}"> Dưới 3 triệu</label>
+                        <label><input type="radio" name="priceRange" value="3000000-7000000" th:checked="${priceRange == '3000000-7000000'}"> 3 - 7 triệu</label>
+                        <label><input type="radio" name="priceRange" value="7000000-15000000" th:checked="${priceRange == '7000000-15000000'}"> 7 - 15 triệu</label>
+                        <label><input type="radio" name="priceRange" value="15000000-999999999" th:checked="${priceRange == '15000000-999999999'}"> Trên 15 triệu</label>
+                    </div>
+                </div>
+
+                <a th:href="@{/products}" class="btn btn-outline btn-block mt-12">Xóa bộ lọc</a>
+            </form>
+        </aside>
+
+        <!-- PRODUCT LIST -->
+        <section class="product-list-section">
+            <div class="list-header">
+                <p th:text="'Tìm thấy ' + ${products.totalElements} + ' sản phẩm'" class="result-count"></p>
+                <select class="sort-select" onchange="changeSort(this.value)">
+                    <option value="createdAt,desc" th:selected="${sort == 'createdAt,desc'}">Mới nhất</option>
+                    <option value="soldCount,desc" th:selected="${sort == 'soldCount,desc'}">Bán chạy nhất</option>
+                    <option value="basePrice,asc" th:selected="${sort == 'basePrice,asc'}">Giá tăng dần</option>
+                    <option value="basePrice,desc" th:selected="${sort == 'basePrice,desc'}">Giá giảm dần</option>
+                    <option value="avgRating,desc" th:selected="${sort == 'avgRating,desc'}">Đánh giá cao nhất</option>
+                </select>
+            </div>
+
+            <div class="product-grid" th:if="${!products.content.isEmpty()}">
+                <div th:each="product : ${products.content}" class="product-card">
+                    <a th:href="@{/products/{slug}(slug=${product.slug})}">
+                        <div class="product-img-wrap">
+                            <img th:src="${product.thumbnailUrl}" th:alt="${product.name}"
+                                 class="product-img" loading="lazy">
+                            <span th:if="${product.salePrice != null}" class="badge-sale">-<span
+                                th:text="${#numbers.formatDecimal((1 - product.salePrice / product.basePrice) * 100, 0, 0)}">10</span>%</span>
+                        </div>
+                        <div class="product-info">
+                            <p class="product-brand" th:text="${product.brandName}"></p>
+                            <h3 class="product-name" th:text="${product.name}"></h3>
+                            <div class="rating-row">
+                                <span th:text="'★ ' + ${product.avgRating}"></span>
+                                <span th:text="'(' + ${product.reviewCount} + ' đánh giá)'"></span>
+                            </div>
+                            <div class="product-price">
+                                <span class="price-current"
+                                      th:text="${#numbers.formatDecimal(product.salePrice ?: product.basePrice, 0, 'COMMA', 0, 'POINT') + '₫'}">
+                                </span>
+                                <span th:if="${product.salePrice != null}" class="price-original"
+                                      th:text="${#numbers.formatDecimal(product.basePrice, 0, 'COMMA', 0, 'POINT') + '₫'}">
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                    <button class="btn btn-primary btn-add-cart"
+                            th:attr="data-slug=${product.slug}"
+                            onclick="quickAddToCart(this)">
+                        Thêm vào giỏ
+                    </button>
+                </div>
+            </div>
+
+            <div th:if="${products.content.isEmpty()}" class="empty-state">
+                <p>Không tìm thấy sản phẩm phù hợp.</p>
+                <a th:href="@{/products}" class="btn btn-primary">Xem tất cả sản phẩm</a>
+            </div>
+
+            <div class="pagination" th:if="${products.totalPages > 1}">
+                <a th:each="i : ${#numbers.sequence(0, products.totalPages-1)}"
+                   th:href="@{/products(page=${i}, sort=${sort}, category=${category}, brand=${brand}, priceRange=${priceRange}, keyword=${keyword})}"
+                   th:text="${i + 1}"
+                   th:classappend="${i == products.number} ? 'page-btn active' : 'page-btn'">
+                </a>
+            </div>
+        </section>
+    </div>
+</main>
+
+<div th:replace="~{layout :: footer}"></div>
+<script th:src="@{/js/main.v2.js}"></script>
+</body>
+</html>

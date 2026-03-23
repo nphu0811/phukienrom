@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thanh toán | Phụ Kiện Rơm</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+<div th:replace="~{layout :: navbar}"></div>
+
+<main class="container page-shell">
+    <h1 class="page-heading h1">Thanh toán</h1>
+
+    <div class="checkout-steps">
+        <div class="step done">✓ Giỏ hàng</div>
+        <div class="step-arrow">›</div>
+        <div class="step active">Thông tin</div>
+        <div class="step-arrow">›</div>
+        <div class="step">Xác nhận</div>
+    </div>
+
+    <div class="checkout-layout">
+
+        <!-- LEFT: Shipping + Payment -->
+        <div class="checkout-form-section">
+
+            <!-- Saved addresses -->
+            <div th:if="${!addresses.isEmpty()}" class="form-section">
+                <h3>Địa chỉ đã lưu</h3>
+                <div class="address-cards">
+                    <label th:each="addr : ${addresses}" class="address-card-label">
+                        <input type="radio" name="addressId" th:value="${addr.id}"
+                               th:checked="${addr.defaultAddress}">
+                        <div class="address-card">
+                            <strong th:text="${addr.recipientName}"></strong>
+                            <span th:text="${addr.phone}"></span>
+                            <p th:text="${addr.streetAddress + ', ' + addr.ward + ', ' + addr.district + ', ' + addr.province}"></p>
+                            <span th:if="${addr.defaultAddress}" class="badge-default">Mặc định</span>
+                        </div>
+                    </label>
+                    <label class="address-card-label">
+                        <input type="radio" name="addressId" value="" id="newAddressRadio">
+                        <div class="address-card new-address-card">
+                            <span>+ Nhập địa chỉ mới</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- New address form -->
+            <div class="form-section" id="newAddressForm"
+                 th:classappend="${addresses.isEmpty()} ? '' : 'hidden'">
+                <h3>Địa chỉ giao hàng</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Họ tên người nhận *</label>
+                        <input type="text" id="recipientName" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại *</label>
+                        <input type="tel" id="recipientPhone" class="form-input" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Địa chỉ cụ thể (số nhà, tên đường) *</label>
+                    <input type="text" id="streetAddress" class="form-input" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Phường/Xã *</label>
+                        <input type="text" id="ward" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Quận/Huyện *</label>
+                        <input type="text" id="district" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tỉnh/Thành phố *</label>
+                        <input type="text" id="province" class="form-input" required>
+                    </div>
+                </div>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="saveAddress"> Lưu địa chỉ này
+                </label>
+            </div>
+
+            <!-- Payment method -->
+            <div class="form-section">
+                <h3>Phương thức thanh toán</h3>
+                <div class="payment-options">
+                    <label class="payment-option">
+                        <input type="radio" name="paymentMethod" value="COD" checked>
+                        <div class="payment-card">
+                            <span class="payment-icon">COD</span>
+                            <div>
+                                <strong>Thanh toán khi nhận hàng</strong>
+                                <p>Trả tiền mặt khi nhận hàng</p>
+                            </div>
+                        </div>
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="paymentMethod" value="VNPAY">
+                        <div class="payment-card">
+                            <span class="payment-icon">VNPAY</span>
+                            <div>
+                                <strong>VNPay</strong>
+                                <p>Thanh toán qua cổng VNPay (ATM/Visa/QR)</p>
+                            </div>
+                        </div>
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="paymentMethod" value="MOMO">
+                        <div class="payment-card">
+                            <span class="payment-icon">MOMO</span>
+                            <div>
+                                <strong>MoMo</strong>
+                                <p>Thanh toán qua ví MoMo</p>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT: Summary -->
+        <div class="checkout-summary">
+            <h3>Tóm tắt đơn hàng</h3>
+
+            <div class="order-items-preview">
+                <div th:each="item : ${cart.items}" class="order-item-row">
+                    <div class="order-item-info">
+                        <img th:src="${item.productImage}" th:alt="${item.productName}" class="order-item-img">
+                        <div>
+                            <div class="order-item-name" th:text="${item.productName}"></div>
+                            <div class="caption" th:text="${item.variantInfo}"></div>
+                        </div>
+                    </div>
+                    <div th:text="'x' + ${item.quantity}" class="caption"></div>
+                    <div class="order-item-price"
+                         th:text="${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT') + '₫'}"></div>
+                </div>
+            </div>
+
+            <div class="summary-totals">
+                <div class="summary-row">
+                    <span>Tạm tính</span>
+                    <span th:text="${#numbers.formatDecimal(cart.totalAmount, 0, 'COMMA', 0, 'POINT') + '₫'}"></span>
+                </div>
+                <div class="summary-row">
+                    <span>Phí vận chuyển</span>
+                    <span th:text="${cart.totalAmount >= 500000 ? 'Miễn phí' : '30.000₫'}"></span>
+                </div>
+                <div class="summary-row total-row">
+                    <strong>Tổng cộng</strong>
+                    <strong th:text="${#numbers.formatDecimal(cart.totalAmount, 0, 'COMMA', 0, 'POINT') + '₫'}"></strong>
+                </div>
+            </div>
+
+            <button class="btn btn-primary btn-block btn-lg" onclick="submitOrder(this)">Đặt hàng</button>
+            <a th:href="@{/cart}" class="btn btn-outline btn-block mt-12">← Quay lại giỏ hàng</a>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{layout :: footer}"></div>
+
+<script>
+function submitOrder(btn) {
+    setLoading(btn, true);
+    // submit handled by backend binding (placeholder)
+}
+</script>
+<script th:src="@{/js/main.v2.js}"></script>
+</body>
+</html>

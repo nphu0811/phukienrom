@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sản phẩm | Admin</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <div class="sidebar-logo">Phụ Kiện Rom</div>
+        <a th:href="@{/admin}" class="admin-nav-link">Tổng quan</a>
+        <a th:href="@{/admin/orders}" class="admin-nav-link">Đơn hàng</a>
+        <a th:href="@{/admin/products}" class="admin-nav-link active">Sản phẩm</a>
+        <a th:href="@{/admin/users}" class="admin-nav-link">Người dùng</a>
+        <a th:href="@{/}" class="admin-nav-link mt-auto">Xem trang web</a>
+    </aside>
+
+    <main class="admin-main">
+        <h1 class="h2 mb-16">Sản phẩm</h1>
+
+        <form method="get" th:action="@{/admin/products}" class="btn-row mb-16 align-start">
+            <input type="text" name="keyword" th:value="${keyword}"
+                   class="form-input flex-1" placeholder="Tìm tên sản phẩm">
+            <button type="submit" class="btn btn-primary">Tìm</button>
+            <a th:href="@{/admin/products/create}" class="btn btn-outline">Thêm sản phẩm</a>
+        </form>
+
+        <div class="surface-card">
+            <table class="table-simple">
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tên</th>
+                    <th>Danh mục</th>
+                    <th>Thương hiệu</th>
+                    <th class="text-right">Giá</th>
+                    <th class="text-center">Đã bán</th>
+                    <th class="text-center">Trạng thái</th>
+                    <th class="text-center">Thao tác</th>
+                </tr>
+                <tr th:each="p : ${products.content}">
+                    <td><img th:src="${p.thumbnailUrl}" class="thumb-48"></td>
+                    <td class="fw-700 maxw-220 ellipsis" th:text="${p.name}"></td>
+                    <td class="caption" th:text="${p.categoryName}"></td>
+                    <td class="caption" th:text="${p.brandName}"></td>
+                    <td class="text-right fw-700 text-primary"
+                        th:text="${#numbers.formatDecimal(p.salePrice ?: p.basePrice,0,'COMMA',0,'POINT') + '₫'}"></td>
+                    <td class="text-center caption" th:text="${p.soldCount ?: 0}"></td>
+                    <td class="text-center">
+                        <span class="status-pill" th:classappend="${p.active} ? ' status-green' : ' status-red'"
+                              th:text="${p.active} ? 'Đang bán' : 'Ẩn'"></span>
+                    </td>
+                    <td class="text-center">
+                        <a th:href="@{/admin/products/edit/{id}(id=${p.id})}" class="btn btn-outline">Sửa</a>
+                    </td>
+                </tr>
+                <tr th:if="${products.totalElements == 0}">
+                    <td colspan="8" class="text-center text-muted py-10">Chưa có sản phẩm.</td>
+                </tr>
+            </table>
+
+            <div th:if="${products.totalPages > 1}" class="pagination">
+                <a th:each="i : ${#numbers.sequence(0, products.totalPages-1)}"
+                   th:href="@{/admin/products(page=${i}, keyword=${keyword})}"
+                   th:text="${i + 1}"
+                   th:classappend="${i == products.number} ? 'page-btn active' : 'page-btn'"></a>
+            </div>
+        </div>
+    </main>
+</div>
+<script th:src="@{/js/main.v2.js}"></script>
+</body>
+</html>

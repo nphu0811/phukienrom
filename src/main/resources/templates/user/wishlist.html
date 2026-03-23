@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Yêu thích | Phụ Kiện Rơm</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+<div th:replace="~{layout :: navbar}"></div>
+
+<main class="container page-shell">
+    <div class="account-layout">
+        <aside class="account-sidebar">
+            <div class="account-nav">
+                <div class="account-nav-title">Tài khoản</div>
+                <a th:href="@{/account/profile}">Thông tin</a>
+                <a th:href="@{/account/orders}">Đơn hàng</a>
+                <a th:href="@{/account/wishlist}" class="active">Yêu thích</a>
+                <a th:href="@{/account/addresses}">Địa chỉ</a>
+            </div>
+        </aside>
+
+        <section class="account-content flex-1 minw-300">
+            <h2 class="h2 mb-16">Sản phẩm yêu thích</h2>
+            <div th:if="${wishlist.isEmpty()}" class="empty-state">
+                <p>Chưa có sản phẩm yêu thích.</p>
+                <a th:href="@{/products}" class="btn btn-primary">Khám phá ngay</a>
+            </div>
+
+            <div class="product-grid" th:unless="${wishlist.isEmpty()}">
+                <div th:each="item : ${wishlist}" class="product-card">
+                    <a th:href="@{/products/{slug}(slug=${item.product.slug})}">
+                        <div class="product-img-wrap">
+                            <img th:src="${item.product.thumbnailUrl?:'/images/no-image.png'}"
+                                 th:alt="${item.product.name}" class="product-img" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-name" th:text="${item.product.name}"></h3>
+                            <div class="product-price">
+                                <span class="price-current"
+                                      th:text="${#numbers.formatDecimal(item.product.salePrice?:item.product.basePrice,0,'COMMA',0,'POINT')+'₫'}"></span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<div th:replace="~{layout :: footer}"></div>
+<script th:src="@{/js/main.v2.js}"></script>
+</body>
+</html>

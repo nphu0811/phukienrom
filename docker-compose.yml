@@ -1,0 +1,76 @@
+version: '3.9'
+
+# ════════════════════════════════════════════════════════
+# Phukienrom - Docker Compose
+# Services: app, postgres, redis (optional), nginx
+# WHY: One command to start entire dev stack
+# ════════════════════════════════════════════════════════
+
+services:
+
+  # ── PostgreSQL Database ──────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: phukienrom_db
+    environment:
+      POSTGRES_DB:       phukienrom_db
+      POSTGRES_USER:     postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ── Spring Boot Application ──────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: phukienrom_app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL:      jdbc:postgresql://postgres:5432/phukienrom_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-password}
+      JWT_SECRET:                 ${JWT_SECRET:-phukienrom-super-secret-key-256bits-minimum}
+      CLOUDINARY_CLOUD_NAME:      ${CLOUDINARY_CLOUD_NAME:-demo}
+      CLOUDINARY_API_KEY:         ${CLOUDINARY_API_KEY:-demo}
+      CLOUDINARY_API_SECRET:      ${CLOUDINARY_API_SECRET:-demo}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_PROFILES_ACTIVE:    prod
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ── Nginx Reverse Proxy (Production) ────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: phukienrom_nginx
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./docker/ssl:/etc/nginx/ssl:ro
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local

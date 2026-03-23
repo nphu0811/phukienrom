@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title th:text="${product.name} + ' | Phụ Kiện Rom'">Sản phẩm</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+<div th:replace="~{layout :: navbar}"></div>
+
+<main class="container page-shell">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+        <a th:href="@{/}">Trang chủ</a> ›
+        <a th:href="@{/products}">Sản phẩm</a> ›
+        <span th:text="${product.categoryName}">Điện thoại</span> ›
+        <span th:text="${product.name}"></span>
+    </nav>
+
+    <!-- PRODUCT TOP SECTION -->
+    <div class="product-detail-grid">
+
+        <!-- Gallery -->
+        <div class="product-gallery">
+            <div class="main-image-wrap">
+                <img id="mainImage"
+                     th:src="${product.thumbnailUrl}"
+                     th:alt="${product.name}"
+                     class="main-image">
+            </div>
+            <div class="thumbnail-row">
+                <img th:each="imgUrl : ${product.imageUrls}"
+                     th:src="${imgUrl}"
+                     class="thumbnail"
+                     th:classappend="${imgUrlStat.first} ? ' active' : ''"
+                     onclick="changeMainImage(this.src)"
+                     th:alt="${product.name}">
+            </div>
+        </div>
+
+        <!-- Info Panel -->
+        <div class="product-info-panel">
+            <p class="product-brand-tag" th:text="${product.brandName}">Apple</p>
+            <h1 class="product-title" th:text="${product.name}">iPhone 15 Pro Max</h1>
+
+            <!-- Rating summary -->
+            <div class="rating-summary">
+                <span class="stars-display">
+                    <span th:each="i : ${#numbers.sequence(1,5)}"
+                          th:text="${i <= product.avgRating} ? '★' : '☆'"
+                          class="star"></span>
+                </span>
+                <span th:text="${product.avgRating} + '/5'">4.8/5</span>
+                <span class="separator">|</span>
+                <span th:text="${product.reviewCount} + ' đánh giá'">128 đánh giá</span>
+                <span class="separator">|</span>
+                <span th:text="'Đã bán: ' + ${product.soldCount}">Đã bán: 1.2k</span>
+            </div>
+
+            <!-- Price -->
+            <div class="price-block">
+                <span class="price-main" id="displayPrice"
+                      th:text="${#numbers.formatDecimal(product.salePrice ?: product.basePrice, 0, 'COMMA', 0, 'POINT') + '₫'}">
+                    25.990.000₫
+                </span>
+                <span th:if="${product.salePrice != null}" class="price-old"
+                      th:text="${#numbers.formatDecimal(product.basePrice, 0, 'COMMA', 0, 'POINT') + '₫'}">
+                    29.990.000₫
+                </span>
+                <span th:if="${product.salePrice != null}" class="discount-badge">
+                    Tiết kiệm
+                    <span th:text="${#numbers.formatDecimal(product.basePrice - product.salePrice, 0, 'COMMA', 0, 'POINT') + '₫'}"></span>
+                </span>
+            </div>
+
+            <!-- Variant Selection -->
+            <div th:if="${#lists.size(product.variants) > 0}" class="variant-section">
+                <div class="variant-group" th:if="${product.variants[0].color != null}">
+                    <label class="variant-label">Màu sắc: <strong id="selectedColor"></strong></label>
+                    <div class="variant-options" id="colorOptions">
+                        <button th:each="v : ${product.variants}"
+                                th:if="${v.color != null}"
+                                class="variant-btn color-btn"
+                                th:data-variant-id="${v.id}"
+                                th:data-color="${v.color}"
+                                th:data-price="${v.effectivePrice}"
+                                th:data-stock="${v.stock}"
+                                th:data-image="${v.imageUrl}"
+                                th:text="${v.color}"
+                                onclick="selectVariant(this)">
+                            Đen
+                        </button>
+                    </div>
+                </div>
+
+                <div class="variant-group" th:if="${product.variants[0].rom != null}">
+                    <label class="variant-label">Dung lượng: <strong id="selectedRom"></strong></label>
+                    <div class="variant-options" id="romOptions">
+                        <button th:each="v : ${product.variants}"
+                                class="variant-btn rom-btn"
+                                th:data-variant-id="${v.id}"
+                                th:data-rom="${v.rom}"
+                                th:data-ram="${v.ram}"
+                                th:data-price="${v.effectivePrice}"
+                                th:data-stock="${v.stock}"
+                                th:text="${v.ram != null ? v.ram + ' / ' : ''} + ${v.rom}"
+                                onclick="selectVariant(this)">
+                            128GB
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stock status -->
+            <div id="stockStatus" class="stock-status">
+                <span id="stockText" class="in-stock">Còn hàng</span>
+            </div>
+
+            <!-- Quantity + Add to cart -->
+            <div class="purchase-actions">
+                <div class="qty-control">
+                    <button onclick="changeQty(-1)" class="qty-btn">−</button>
+                    <input type="number" id="quantity" value="1" min="1" class="qty-input" readonly>
+                    <button onclick="changeQty(1)" class="qty-btn">+</button>
+                </div>
+                <button class="btn btn-primary btn-lg" id="addToCartBtn" onclick="addToCart()">
+                    Thêm vào giỏ hàng
+                </button>
+                <button class="btn btn-wishlist" onclick="toggleWishlist(this.dataset.productId)"
+                        th:attr="data-product-id=${product.id}">
+                    Yêu thích
+                </button>
+            </div>
+
+            <!-- Promotions -->
+            <div class="promo-box">
+                <h4>Ưu đãi kèm theo</h4>
+                <ul>
+                    <li>Miễn phí vận chuyển toàn quốc đơn từ 500k</li>
+                    <li>Bảo hành 12 tháng chính hãng</li>
+                    <li>Đổi trả trong 7 ngày nếu lỗi nhà sản xuất</li>
+                    <li>Tặng ốp lưng + cường lực</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- DESCRIPTION TAB -->
+    <div class="product-tabs">
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab(this, 'desc')">Mô tả sản phẩm</button>
+            <button class="tab-btn" onclick="switchTab(this, 'reviews')">
+                Đánh giá (<span th:text="${product.reviewCount}">0</span>)
+            </button>
+        </div>
+
+        <div id="desc" class="tab-content active">
+            <div class="product-description" th:utext="${product.description}">
+                Mô tả sản phẩm...
+            </div>
+        </div>
+
+        <div id="reviews" class="tab-content">
+            <!-- Rating overview -->
+            <div class="rating-overview">
+                <div class="big-rating">
+                    <span class="big-number" th:text="${product.avgRating}">4.8</span>
+                    <span class="max">/5</span>
+                    <div class="stars-big">
+                        <span th:each="i : ${#numbers.sequence(1,5)}"
+                              th:text="${i <= product.avgRating} ? '★' : '☆'"
+                              class="star-lg"></span>
+                    </div>
+                    <p th:text="${product.reviewCount} + ' đánh giá'"></p>
+                </div>
+            </div>
+
+            <!-- Write review (authenticated only) -->
+            <div sec:authorize="isAuthenticated()" class="write-review">
+                <h4>Viết đánh giá của bạn</h4>
+                <div class="star-rating-input" id="starInput">
+                    <span class="star-pick" data-val="1">★</span>
+                    <span class="star-pick" data-val="2">★</span>
+                    <span class="star-pick" data-val="3">★</span>
+                    <span class="star-pick" data-val="4">★</span>
+                    <span class="star-pick" data-val="5">★</span>
+                </div>
+                <input type="hidden" id="ratingValue" value="0">
+                <textarea id="reviewComment" placeholder="Chia sẻ trải nghiệm của bạn..." rows="4"></textarea>
+                <button class="btn btn-primary" onclick="submitReview()">Gửi đánh giá</button>
+            </div>
+
+            <!-- Review list -->
+            <div class="review-list">
+                <div th:each="review : ${reviews.content}" class="review-item">
+                    <div class="review-header">
+                        <strong th:text="${review.userName}">Nguyễn Văn A</strong>

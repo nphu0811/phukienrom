@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng nhập | Phụ Kiện Rom</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body class="auth-body">
+<div class="auth-container">
+    <div class="auth-logo">
+        <span class="logo-text">Phụ Kiện Rom</span>
+    </div>
+    <div class="auth-card">
+        <h2>Đăng nhập</h2>
+        <p class="auth-sub">Truy cập tài khoản để mua sắm và theo dõi đơn hàng.</p>
+
+        <form th:action="@{/auth/login}" method="post">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="username" class="form-input" required>
+            </div>
+            <div class="form-group password-wrap">
+                <label>Mật khẩu</label>
+                <input type="password" name="password" class="form-input" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Đăng nhập</button>
+        </form>
+
+        <div class="auth-divider"><span>Hoặc</span></div>
+        <div class="auth-switch">
+            Chưa có tài khoản? <a th:href="@{/auth/register}">Đăng ký</a>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/main.v2.js}"></script>
+</body>
+</html>

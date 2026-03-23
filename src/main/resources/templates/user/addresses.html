@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Địa chỉ | Phụ Kiện Rơm</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+<div th:replace="~{layout :: navbar}"></div>
+
+<main class="container page-shell">
+    <div class="account-layout">
+        <aside class="account-sidebar">
+            <div class="account-nav">
+                <div class="account-nav-title">Tài khoản</div>
+                <a th:href="@{/account/profile}">Thông tin</a>
+                <a th:href="@{/account/orders}">Đơn hàng</a>
+                <a th:href="@{/account/wishlist}">Yêu thích</a>
+                <a th:href="@{/account/addresses}" class="active">Địa chỉ</a>
+            </div>
+        </aside>
+
+        <section class="account-content flex-1 minw-300">
+            <h2 class="h2 mb-16">Địa chỉ của tôi</h2>
+            <div th:if="${addresses.isEmpty()}" class="empty-state">
+                <p>Chưa có địa chỉ nào.</p>
+                <a th:href="@{/account/profile}" class="btn btn-primary">Cập nhật ngay</a>
+            </div>
+
+            <div th:each="addr : ${addresses}" class="auth-card mb-12">
+                <p class="body" th:text="${addr.recipientName}"></p>
+                <p class="caption" th:text="${addr.phone}"></p>
+                <p class="caption" th:text="${addr.fullAddress}"></p>
+                <span th:if="${addr.isDefault}" class="badge-new">Mặc định</span>
+            </div>
+        </section>
+    </div>
+</main>
+
+<div th:replace="~{layout :: footer}"></div>
+<script th:src="@{/js/main.v2.js}"></script>
+</body>
+</html>

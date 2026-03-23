@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard | Admin</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <div class="sidebar-logo">Phụ Kiện Rom</div>
+        <a th:href="@{/admin}" class="admin-nav-link active">Tổng quan</a>
+        <a th:href="@{/admin/orders}" class="admin-nav-link">Đơn hàng</a>
+        <a th:href="@{/admin/products}" class="admin-nav-link">Sản phẩm</a>
+        <a th:href="@{/admin/users}" class="admin-nav-link">Người dùng</a>
+        <a th:href="@{/}" class="admin-nav-link mt-auto">Xem trang web</a>
+    </aside>
+
+    <main class="admin-main">
+        <h1 class="h2 mb-16">Tổng quan</h1>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value text-primary" th:text="${pendingOrders ?: 0}">0</div>
+                <div class="stat-label">Đơn chờ xử lý</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value text-primary" th:text="${totalProducts ?: 0}">0</div>
+                <div class="stat-label">Sản phẩm</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value text-primary" th:text="${totalUsers ?: 0}">0</div>
+                <div class="stat-label">Người dùng</div>
+            </div>
+        </div>
+
+        <div class="grid-main-aside">
+            <div class="surface-card">
+                <div class="flex-between mb-16">
+                    <h3 class="h3">Đơn hàng mới</h3>
+                    <a th:href="@{/admin/orders}" class="link">Xem tất cả →</a>
+                </div>
+                <table class="table-simple">
+                    <tr>
+                        <th>Mã đơn</th>
+                        <th>Tổng</th>
+                        <th>Trạng thái</th>
+                        <th>Thời gian</th>
+                    </tr>
+                    <tr th:each="order : ${recentOrders}">
+                        <td th:text="${order.orderCode}"></td>
+                        <td class="text-primary fw-700"
+                            th:text="${#numbers.formatDecimal(order.totalAmount,0,'COMMA',0,'POINT') + '₫'}"></td>
+                        <td><span class="status-pill status-amber" th:text="${order.status}"></span></td>
+                        <td class="text-muted" th:text="${#temporals.format(order.createdAt,'dd/MM HH:mm')}"></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(recentOrders)}">
+                        <td colspan="4" class="text-center text-muted py-10">Chưa có đơn hàng.</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="surface-card">
+                <h3 class="h3 mb-12">Bán chạy nhất</h3>
+                <div th:each="p : ${topSelling}" class="flex-between py-10 border-bottom">
+                    <div class="flex-between w-100 gap-12">
+                        <img th:src="${p.thumbnailUrl}" class="thumb-48">
+                        <div class="flex-1 minw-0">
+                            <p class="body fw-700 ellipsis" th:text="${p.name}"></p>
+                            <p class="caption" th:text="${p.brandName}"></p>
+                        </div>
+                        <span class="fw-700 text-primary"
+                              th:text="${#numbers.formatDecimal(p.salePrice ?: p.basePrice,0,'COMMA',0,'POINT') + '₫'}"></span>
+                    </div>
+                </div>
+                <div th:if="${#lists.isEmpty(topSelling)}" class="text-center text-muted">Chưa có dữ liệu.</div>
+            </div>
+        </div>
+    </main>
+</div>
+<script th:src="@{/js/main.v2.js}"></script>
+</body>
+</html>

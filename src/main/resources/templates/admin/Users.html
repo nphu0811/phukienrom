@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Người dùng | Admin</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <div class="sidebar-logo">Phụ Kiện Rom</div>
+        <a th:href="@{/admin}" class="admin-nav-link">Tổng quan</a>
+        <a th:href="@{/admin/orders}" class="admin-nav-link">Đơn hàng</a>
+        <a th:href="@{/admin/products}" class="admin-nav-link">Sản phẩm</a>
+        <a th:href="@{/admin/users}" class="admin-nav-link active">Người dùng</a>
+        <a th:href="@{/}" class="admin-nav-link mt-auto">Xem trang web</a>
+    </aside>
+
+    <main class="admin-main">
+        <h1 class="h2 mb-16">Người dùng</h1>
+
+        <form method="get" th:action="@{/admin/users}" class="btn-row mb-16 align-start">
+            <input type="text" name="keyword" th:value="${keyword}"
+                   class="form-input flex-1" placeholder="Tìm theo email / tên">
+            <button type="submit" class="btn btn-primary">Tìm</button>
+        </form>
+
+        <div class="surface-card">
+            <table class="table-simple">
+                <tr>
+                    <th>ID</th>
+                    <th>Họ tên</th>
+                    <th>Email</th>
+                    <th>Điện thoại</th>
+                    <th class="text-center">Vai trò</th>
+                    <th class="text-center">Trạng thái</th>
+                    <th>Ngày đăng ký</th>
+                </tr>
+                <tr th:each="u : ${users.content}">
+                    <td class="caption" th:text="${u.id}"></td>
+                    <td class="fw-700" th:text="${u.fullName}"></td>
+                    <td th:text="${u.email}"></td>
+                    <td class="caption" th:text="${u.phone ?: '-'}"></td>
+                    <td class="text-center">
+                        <span class="status-pill" th:classappend="${u.role.name() == 'ADMIN'} ? ' status-amber' : ' status-blue'"
+                              th:text="${u.role.name()}"></span>
+                    </td>
+                    <td class="text-center">
+                        <span class="status-pill" th:classappend="${u.active} ? ' status-green' : ' status-red'"
+                              th:text="${u.active} ? 'Hoạt động' : 'Khoá'"></span>
+                    </td>
+                    <td class="caption" th:text="${#temporals.format(u.createdAt,'dd/MM/yyyy')}"></td>
+                </tr>
+                <tr th:if="${users.totalElements == 0}">
+                    <td colspan="7" class="text-center text-muted py-10">Chưa có người dùng.</td>
+                </tr>
+            </table>
+
+            <div th:if="${users.totalPages > 1}" class="pagination">
+                <a th:each="i : ${#numbers.sequence(0, users.totalPages-1)}"
+                   th:href="@{/admin/users(page=${i}, keyword=${keyword})}"
+                   th:text="${i + 1}"
+                   th:classappend="${i == users.number} ? 'page-btn active' : 'page-btn'"></a>
+            </div>
+        </div>
+    </main>
+</div>
+<script th:src="@{/js/main.v2.js}"></script>
+</body>
+</html>
