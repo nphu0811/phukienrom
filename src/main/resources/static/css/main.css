@@ -137,7 +137,7 @@ ul { list-style: none; }
 .cat-link:focus-visible { outline: 2px solid rgba(255,255,255,.8); outline-offset: -2px; }
 
 /* User dropdown - JS controlled */
-.user-menu { position: relative; display: flex; align-items: center; gap: 4px; }
+.user-menu { position: relative; display: flex; align-items: center; gap: 12px; }
 .dropdown-toggle {
   color: white; padding: 8px 12px; border-radius: var(--radius);
   transition: var(--transition); font-size: 14px; display: flex; align-items: center; gap: 6px;
