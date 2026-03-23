@@ -1,13 +1,30 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${pageTitle ?: 'Sản phẩm'} + ' | Phụ Kiện Rom'">Sản phẩm</title>
+    <title th:text="${pageTitle ?: 'Sáº£n pháº©m'} + ' | Phá»¥ Kiá»‡n Rom'">Sáº£n pháº©m</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
 <div th:replace="~{layout :: navbar}"></div>
 
 <main class="container page-shell">
+    <section class="category-strip">
+        <div class="strip-scroll">
+            <a th:href="@{/products(category='dien-thoai')}" class="cat-card hover-lift btn-press">
+                <span>📱</span><strong>Điện thoại</strong>
+            </a>
+            <a th:href="@{/products(category='tai-nghe')}" class="cat-card hover-lift btn-press">
+                <span>🎧</span><strong>Tai nghe</strong>
+            </a>
+            <a th:href="@{/products(category='sac-du-phong')}" class="cat-card hover-lift btn-press">
+                <span>🔋</span><strong>Sạc & Pin</strong>
+            </a>
+            <a th:href="@{/products(category='may-tinh-bang')}" class="cat-card hover-lift btn-press">
+                <span>💻</span><strong>Tablet</strong>
+            </a>
+        </div>
+    </section>
+
     <div class="page-layout">
 
         <!-- FILTER SIDEBAR -->
@@ -74,7 +91,7 @@
             </div>
 
             <div class="product-grid" th:if="${!products.content.isEmpty()}">
-                <div th:each="product : ${products.content}" class="product-card">
+                <div th:each="product : ${products.content}" class="product-card hover-lift">
                     <a th:href="@{/products/{slug}(slug=${product.slug})}">
                         <div class="product-img-wrap">
                             <img th:src="${product.thumbnailUrl}" th:alt="${product.name}"
@@ -99,7 +116,7 @@
                             </div>
                         </div>
                     </a>
-                    <button class="btn btn-primary btn-add-cart"
+                    <button class="btn btn-primary btn-add-cart btn-press"
                             th:attr="data-slug=${product.slug}"
                             onclick="quickAddToCart(this)">
                         Thêm vào giỏ
@@ -108,8 +125,9 @@
             </div>
 
             <div th:if="${products.content.isEmpty()}" class="empty-state">
+                <span class="emoji">😢</span>
                 <p>Không tìm thấy sản phẩm phù hợp.</p>
-                <a th:href="@{/products}" class="btn btn-primary">Xem tất cả sản phẩm</a>
+                <a th:href="@{/products}" class="btn btn-primary btn-press">Quay lại</a>
             </div>
 
             <div class="pagination" th:if="${products.totalPages > 1}">

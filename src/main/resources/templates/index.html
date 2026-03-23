@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phụ Kiện Rởm - Điện thoại & Phụ kiện chính hãng</title>
+    <title>Phá»¥ Kiá»‡n Rá»Ÿm - Äiá»‡n thoáº¡i & Phá»¥ kiá»‡n chÃ­nh hÃ£ng</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -17,17 +17,17 @@
     <section class="hero hero-home">
         <div class="hero-slide">
             <div class="container hero-inner">
-                <div class="hero-content">
-                    <p class="eyebrow">Chính hãng • Giá tốt • Giao nhanh</p>
-                    <h1>Phụ Kiện & Điện Thoại Chuẩn Hãng</h1>
-                    <p>Hàng nghìn sản phẩm được chọn lọc, bảo hành đầy đủ, hỗ trợ đổi trả trong 7 ngày.</p>
-                    <div class="btn-row">
-                        <a th:href="@{/products}" class="btn btn-primary btn-lg">Mua ngay</a>
-                        <a th:href="@{/products(category='dien-thoai')}" class="btn btn-white btn-lg">Xem điện thoại</a>
+                <div class="hero-content fade-in">
+                    <p class="eyebrow">Chính hãng • Giao nhanh • UY TÍN</p>
+                    <h1>Phụ Kiện &amp; Điện Thoại <span>Chuẩn Hàng</span></h1>
+                    <p>Hàng nghìn sản phẩm chính hãng, chất lượng được kiểm duyệt. Đặt hàng nhanh, giao hóa tốc độ, đổi trả dễ dàng.</p>
+                    <div class="hero-ctas">
+                        <a th:href="@{/products}" class="hero-primary btn-press">Mua ngay</a>
+                        <a th:href="@{/products(category='dien-thoai')}" class="hero-secondary btn-press">Xem sản phẩm</a>
                     </div>
                 </div>
-                <div class="hero-image-wrap">
-                    <svg class="hero-image hero-phone-svg" viewBox="0 0 260 400" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Điện thoại chính hãng">
+                <div class="hero-image-wrap fade-in">
+                    <svg class="hero-image hero-phone-svg" viewBox="0 0 260 400" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Äiá»‡n thoáº¡i chÃ­nh hÃ£ng">
                         <!-- Phone body -->
                         <rect x="30" y="10" width="200" height="380" rx="28" fill="url(#phoneGrad)"/>
                         <!-- Side highlight -->
@@ -110,15 +110,58 @@
         </div>
     </section>
 
+    <!-- CATEGORY STRIP -->
+    <section class="category-strip">
+        <div class="container">
+            <div class="strip-scroll">
+                <a th:href="@{/products(category='dien-thoai')}" class="cat-card hover-lift btn-press">
+                    <span>📱</span><strong>Điện thoại</strong>
+                </a>
+                <a th:href="@{/products(category='tai-nghe')}" class="cat-card hover-lift btn-press">
+                    <span>🎧</span><strong>Tai nghe</strong>
+                </a>
+                <a th:href="@{/products(category='sac-du-phong')}" class="cat-card hover-lift btn-press">
+                    <span>🔋</span><strong>Sạc & Pin</strong>
+                </a>
+                <a th:href="@{/products(category='may-tinh-bang')}" class="cat-card hover-lift btn-press">
+                    <span>💻</span><strong>Tablet</strong>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROMO BANNER -->
+    <section class="promo-banner container fade-in">
+        <div>
+            <span class="promo-badge">Ưu đãi hôm nay</span>
+            <h3>Freeship toàn quốc cho đơn từ 500.000đ</h3>
+            <p>Tặng kèm gói bảo hành 1 đổi 1 trong 7 ngày cho mọi đơn hàng.</p>
+            <div class="promo-cta">
+                <a th:href="@{/products}" class="hero-primary btn-press">Mua ngay</a>
+                <a th:href="@{/pages/huong-dan-mua-hang}" class="hero-secondary btn-press">Xem chi tiết</a>
+            </div>
+        </div>
+        <div class="promo-visual"></div>
+    </section>
+
     <!-- FEATURED PRODUCTS -->
     <section class="products-section container">
         <div class="section-header">
-            <h2 class="section-title">Sản phẩm nổi bật</h2>
-            <a th:href="@{/products}" class="see-all">Xem tất cả →</a>
+            <h2 class="section-title">Sáº£n pháº©m ná»•i báº­t</h2>
+            <a th:href="@{/products}" class="see-all">Xem táº¥t cáº£ â†’</a>
+        </div>
+
+        <div th:if="${featuredProducts == null}" class="skeleton-grid">
+            <div th:each="i : ${#numbers.sequence(1,4)}" class="skeleton-card">
+                <div class="skeleton-thumb"></div>
+                <div class="skeleton-line md"></div>
+                <div class="skeleton-line sm"></div>
+                <div class="skeleton-line lg"></div>
+            </div>
         </div>
 
         <div th:if="${featuredProducts != null and !featuredProducts.isEmpty()}" class="product-grid">
-            <div th:each="product : ${featuredProducts}" class="product-card">
+            <div th:each="product : ${featuredProducts}" class="product-card hover-lift">
                 <a th:href="@{/products/{slug}(slug=${product.slug})}">
                     <div class="product-img-wrap">
                         <img th:src="${product.thumbnailUrl != null ? product.thumbnailUrl : '/images/no-image.png'}"
@@ -139,29 +182,38 @@
                         </div>
                     </div>
                 </a>
-                <button class="btn-add-cart"
+                <button class="btn-add-cart btn-press"
                         th:attr="data-slug=${product.slug}"
                         onclick="quickAddToCart(this)">
-                    Thêm vào giỏ
+                    ThÃªm vÃ o giá»
                 </button>
             </div>
         </div>
 
-        <div th:if="${featuredProducts == null or featuredProducts.isEmpty()}"
+        <div th:if="${featuredProducts != null and featuredProducts.isEmpty()}"
              class="empty-state">
-            <p>Chưa có sản phẩm nổi bật. Thêm sản phẩm từ trang quản trị để hiển thị.</p>
-            <a th:href="@{/admin/products}" class="btn btn-primary">Đi tới Admin</a>
+            <span class="emoji">😢</span>
+            <p>ChÆ°a cÃ³ sáº£n pháº©m ná»•i báº­t.</p>
+            <a th:href="@{/products}" class="btn btn-primary btn-press">Quay láº¡i sáº£n pháº©m</a>
         </div>
     </section>
 
     <!-- TOP SELLING -->
     <section class="products-section container section-surface">
         <div class="section-header">
-            <h2 class="section-title">Bán chạy nhất</h2>
-            <a th:href="@{/products}" class="see-all">Xem tất cả →</a>
+            <h2 class="section-title">BÃ¡n cháº¡y nháº¥t</h2>
+            <a th:href="@{/products}" class="see-all">Xem táº¥t cáº£ â†’</a>
+        </div>
+        <div th:if="${topSelling == null}" class="skeleton-grid">
+            <div th:each="i : ${#numbers.sequence(1,4)}" class="skeleton-card">
+                <div class="skeleton-thumb"></div>
+                <div class="skeleton-line md"></div>
+                <div class="skeleton-line sm"></div>
+                <div class="skeleton-line lg"></div>
+            </div>
         </div>
         <div th:if="${topSelling != null and !topSelling.isEmpty()}" class="product-grid">
-            <div th:each="product : ${topSelling}" class="product-card">
+            <div th:each="product : ${topSelling}" class="product-card hover-lift">
                 <a th:href="@{/products/{slug}(slug=${product.slug})}">
                     <div class="product-img-wrap">
                         <img th:src="${product.thumbnailUrl != null ? product.thumbnailUrl : '/images/no-image.png'}"
@@ -176,29 +228,39 @@
                                   th:text="${#numbers.formatDecimal(product.salePrice ?: product.basePrice, 0, 'COMMA', 0, 'POINT') + '₫'}">
                             </span>
                         </div>
-                        <p class="caption" th:text="'Đã bán: ' + ${product.soldCount}"></p>
+                        <p class="caption" th:text="'ÄÃ£ bÃ¡n: ' + ${product.soldCount}"></p>
                     </div>
                 </a>
             </div>
         </div>
-        <div th:if="${topSelling == null or topSelling.isEmpty()}" class="empty-state">
-            <p>Chưa có dữ liệu bán hàng.</p>
+        <div th:if="${topSelling != null and topSelling.isEmpty()}" class="empty-state">
+            <span class="emoji">😢</span>
+            <p>ChÆ°a cÃ³ dá»¯ liá»‡u bÃ¡n hÃ ng.</p>
+            <a th:href="@{/products}" class="btn btn-primary btn-press">Xem sáº£n pháº©m</a>
         </div>
     </section>
 
     <!-- NEWEST -->
     <section class="products-section container">
         <div class="section-header">
-            <h2 class="section-title">Mới nhất</h2>
-            <a th:href="@{/products}" class="see-all">Xem tất cả →</a>
+            <h2 class="section-title">Má»›i nháº¥t</h2>
+            <a th:href="@{/products}" class="see-all">Xem táº¥t cáº£ â†’</a>
+        </div>
+        <div th:if="${newestProducts == null}" class="skeleton-grid">
+            <div th:each="i : ${#numbers.sequence(1,4)}" class="skeleton-card">
+                <div class="skeleton-thumb"></div>
+                <div class="skeleton-line md"></div>
+                <div class="skeleton-line sm"></div>
+                <div class="skeleton-line lg"></div>
+            </div>
         </div>
         <div th:if="${newestProducts != null and !newestProducts.isEmpty()}" class="product-grid">
-            <div th:each="product : ${newestProducts}" class="product-card">
+            <div th:each="product : ${newestProducts}" class="product-card hover-lift">
                 <a th:href="@{/products/{slug}(slug=${product.slug})}">
                     <div class="product-img-wrap">
                         <img th:src="${product.thumbnailUrl != null ? product.thumbnailUrl : '/images/no-image.png'}"
                              th:alt="${product.name}" class="product-img" loading="lazy">
-                        <span class="badge-new">MỚI</span>
+                        <span class="badge-new">Má»šI</span>
                     </div>
                     <div class="product-info">
                         <p class="product-brand" th:text="${product.brandName}"></p>
@@ -212,8 +274,10 @@
                 </a>
             </div>
         </div>
-        <div th:if="${newestProducts == null or newestProducts.isEmpty()}" class="empty-state">
-            <p>Chưa có sản phẩm mới.</p>
+        <div th:if="${newestProducts != null and newestProducts.isEmpty()}" class="empty-state">
+            <span class="emoji">😢</span>
+            <p>ChÆ°a cÃ³ sáº£n pháº©m má»›i.</p>
+            <a th:href="@{/products}" class="btn btn-primary btn-press">Quay láº¡i sáº£n pháº©m</a>
         </div>
     </section>
 </main>
