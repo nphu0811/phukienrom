@@ -110,6 +110,11 @@ function toggleDropdown(e) {
     if (!menu) return;
     const isOpen = menu.classList.contains('open');
     menu.classList.toggle('open', !isOpen);
+    if (!isOpen) {
+        menu.style.opacity = '1'; menu.style.visibility = 'visible'; menu.style.pointerEvents = 'auto';
+    } else {
+        menu.style.opacity = '0'; menu.style.visibility = 'hidden'; menu.style.pointerEvents = 'none';
+    }
     btn.setAttribute('aria-expanded', (!isOpen).toString());
 }
 document.addEventListener('click', function(e) {
@@ -117,6 +122,7 @@ document.addEventListener('click', function(e) {
     const btn  = document.getElementById('userMenuBtn');
     if (menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
         menu.classList.remove('open');
+        menu.style.opacity = '0'; menu.style.visibility = 'hidden'; menu.style.pointerEvents = 'none';
         btn.setAttribute('aria-expanded', 'false');
     }
 });
