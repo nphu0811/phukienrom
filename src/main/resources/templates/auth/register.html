@@ -2,19 +2,19 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Đăng ký | Phụ Kiện Rởm</title>
+    <title>Đăng ký | Phụ Kiện Rom</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body class="auth-body">
 <div class="auth-container">
     <div class="auth-logo">
-        <span class="logo-text">Phụ Kiện Rởm</span>
+        <span class="logo-text">Phụ Kiện Rom</span>
     </div>
     <div class="auth-card">
         <h2>Tạo tài khoản</h2>
         <p class="auth-sub">Mua sắm nhanh hơn, quản lý đơn hàng dễ dàng.</p>
 
-        <form th:action="@{/auth/register}" method="post">
+        <form id="registerForm">
             <div class="form-group">
                 <label>Họ và tên</label>
                 <input type="text" name="fullName" class="form-input" required>
@@ -23,15 +23,19 @@
                 <label>Email</label>
                 <input type="email" name="email" class="form-input" required>
             </div>
+            <div class="form-group">
+                <label>Số điện thoại (tuỳ chọn)</label>
+                <input type="tel" name="phone" class="form-input">
+            </div>
             <div class="form-group password-wrap">
                 <label>Mật khẩu</label>
-                <input type="password" name="password" class="form-input" required>
+                <input type="password" name="password" class="form-input" required minlength="6">
             </div>
             <div class="form-group password-wrap">
                 <label>Nhập lại mật khẩu</label>
-                <input type="password" name="confirmPassword" class="form-input" required>
+                <input type="password" name="confirmPassword" class="form-input" required minlength="6">
             </div>
-            <button type="submit" class="btn btn-primary btn-block">Đăng ký</button>
+            <button type="submit" class="btn btn-primary btn-block btn-press">Đăng ký</button>
         </form>
 
         <div class="auth-switch">
@@ -40,5 +44,41 @@
     </div>
 </div>
 <script th:src="@{/js/main.v2.js}"></script>
+<script>
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = this.querySelector('button[type="submit"]');
+  setLoading(btn, true);
+  const fullName = this.fullName.value.trim();
+  const email = this.email.value.trim();
+  const phone = this.phone.value.trim();
+  const password = this.password.value;
+  const confirm = this.confirmPassword.value;
+  if (password !== confirm) {
+    showToast('Mật khẩu nhập lại không khớp', 'error', 4000);
+    setLoading(btn, false);
+    return;
+  }
+  try {
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fullName, email, phone, password })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Đăng ký thất bại');
+    const auth = data.data;
+    localStorage.setItem('jwt_token', auth.accessToken);
+    localStorage.setItem('refresh_token', auth.refreshToken);
+    localStorage.setItem('user', JSON.stringify(auth.user));
+    document.cookie = `jwt=${auth.accessToken}; path=/; SameSite=Lax`;
+    window.location.href = '/';
+  } catch (err) {
+    showToast(err.message, 'error', 4000);
+  } finally {
+    setLoading(btn, false);
+  }
+});
+</script>
 </body>
 </html>

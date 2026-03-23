@@ -2,28 +2,28 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Đăng nhập | Phụ Kiện Rởm</title>
+    <title>Đăng nhập | Phụ Kiện Rom</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body class="auth-body">
 <div class="auth-container">
     <div class="auth-logo">
-        <span class="logo-text">Phụ Kiện Rởm</span>
+        <span class="logo-text">Phụ Kiện Rom</span>
     </div>
     <div class="auth-card">
         <h2>Đăng nhập</h2>
         <p class="auth-sub">Truy cập tài khoản để mua sắm và theo dõi đơn hàng.</p>
 
-        <form th:action="@{/auth/login}" method="post">
+        <form id="loginForm">
             <div class="form-group">
                 <label>Email</label>
-                <input type="email" name="username" class="form-input" required>
+                <input type="email" name="email" class="form-input" required>
             </div>
             <div class="form-group password-wrap">
                 <label>Mật khẩu</label>
                 <input type="password" name="password" class="form-input" required>
             </div>
-            <button type="submit" class="btn btn-primary btn-block">Đăng nhập</button>
+            <button type="submit" class="btn btn-primary btn-block btn-press">Đăng nhập</button>
         </form>
 
         <div class="auth-divider"><span>Hoặc</span></div>
@@ -33,5 +33,34 @@
     </div>
 </div>
 <script th:src="@{/js/main.v2.js}"></script>
+<script>
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = this.querySelector('button[type="submit"]');
+  setLoading(btn, true);
+  const email = this.email.value.trim();
+  const password = this.password.value;
+  const redirect = new URLSearchParams(window.location.search).get('redirect') || '/';
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Đăng nhập thất bại');
+    const auth = data.data;
+    localStorage.setItem('jwt_token', auth.accessToken);
+    localStorage.setItem('refresh_token', auth.refreshToken);
+    localStorage.setItem('user', JSON.stringify(auth.user));
+    document.cookie = `jwt=${auth.accessToken}; path=/; SameSite=Lax`;
+    window.location.href = redirect;
+  } catch (err) {
+    showToast(err.message, 'error', 4000);
+  } finally {
+    setLoading(btn, false);
+  }
+});
+</script>
 </body>
 </html>

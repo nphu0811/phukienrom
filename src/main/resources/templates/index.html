@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phá»¥ Kiá»‡n Rá»Ÿm - Äiá»‡n thoáº¡i & Phá»¥ kiá»‡n chÃ­nh hÃ£ng</title>
+    <title>Phụ Kiện Rởm - Điện thoại & Phụ Kiện Chính Hãng</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -147,8 +147,8 @@
     <!-- FEATURED PRODUCTS -->
     <section class="products-section container">
         <div class="section-header">
-            <h2 class="section-title">Sáº£n pháº©m ná»•i báº­t</h2>
-            <a th:href="@{/products}" class="see-all">Xem táº¥t cáº£ â†’</a>
+            <h2 class="section-title">Sản Phẩm Nổi bật</h2>
+            <a th:href="@{/products}" class="see-all">Xem tất cả==></a>
         </div>
 
         <div th:if="${featuredProducts == null}" class="skeleton-grid">
@@ -185,7 +185,7 @@
                 <button class="btn-add-cart btn-press"
                         th:attr="data-slug=${product.slug}"
                         onclick="quickAddToCart(this)">
-                    ThÃªm vÃ o giá»
+                    Thêm vào giỏ hàng?»
                 </button>
             </div>
         </div>
@@ -201,8 +201,8 @@
     <!-- TOP SELLING -->
     <section class="products-section container section-surface">
         <div class="section-header">
-            <h2 class="section-title">BÃ¡n cháº¡y nháº¥t</h2>
-            <a th:href="@{/products}" class="see-all">Xem táº¥t cáº£ â†’</a>
+            <h2 class="section-title">Bán chạy nhất</h2>
+            <a th:href="@{/products}" class="see-all">Xem tất cả ==></a>
         </div>
         <div th:if="${topSelling == null}" class="skeleton-grid">
             <div th:each="i : ${#numbers.sequence(1,4)}" class="skeleton-card">
@@ -235,16 +235,16 @@
         </div>
         <div th:if="${topSelling != null and topSelling.isEmpty()}" class="empty-state">
             <span class="emoji">😢</span>
-            <p>ChÆ°a cÃ³ dá»¯ liá»‡u bÃ¡n hÃ ng.</p>
-            <a th:href="@{/products}" class="btn btn-primary btn-press">Xem sáº£n pháº©m</a>
+            <p>Chưa có sản phẩm - liên hệ admin</p>
+            <a th:href="@{/products}" class="btn btn-primary btn-press">Xem sản phẩm==></a>
         </div>
     </section>
 
     <!-- NEWEST -->
     <section class="products-section container">
         <div class="section-header">
-            <h2 class="section-title">Má»›i nháº¥t</h2>
-            <a th:href="@{/products}" class="see-all">Xem táº¥t cáº£ â†’</a>
+            <h2 class="section-title">Mới nhất</h2>
+            <a th:href="@{/products}" class="see-all">Xem tất cả==></a>
         </div>
         <div th:if="${newestProducts == null}" class="skeleton-grid">
             <div th:each="i : ${#numbers.sequence(1,4)}" class="skeleton-card">
@@ -260,7 +260,7 @@
                     <div class="product-img-wrap">
                         <img th:src="${product.thumbnailUrl != null ? product.thumbnailUrl : '/images/no-image.png'}"
                              th:alt="${product.name}" class="product-img" loading="lazy">
-                        <span class="badge-new">Má»šI</span>
+                        <span class="badge-new">Mới</span>
                     </div>
                     <div class="product-info">
                         <p class="product-brand" th:text="${product.brandName}"></p>
