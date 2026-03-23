@@ -27,8 +27,84 @@
                     </div>
                 </div>
                 <div class="hero-image-wrap">
-                    <img th:src="@{/images/hero-phone.png}"
-                         alt="Điện thoại chính hãng" class="hero-image">
+                    <svg class="hero-image hero-phone-svg" viewBox="0 0 260 400" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Điện thoại chính hãng">
+                        <!-- Phone body -->
+                        <rect x="30" y="10" width="200" height="380" rx="28" fill="url(#phoneGrad)"/>
+                        <!-- Side highlight -->
+                        <rect x="30" y="10" width="200" height="380" rx="28" fill="url(#sideHighlight)" opacity="0.5"/>
+                        <!-- Screen bezel -->
+                        <rect x="42" y="40" width="176" height="310" rx="16" fill="#0d1117"/>
+                        <!-- Screen content -->
+                        <rect x="48" y="46" width="164" height="298" rx="12" fill="url(#screenGrad)"/>
+                        <!-- Status bar -->
+                        <rect x="48" y="46" width="164" height="22" rx="12" fill="rgba(0,0,0,0.3)"/>
+                        <!-- Notch / Dynamic island -->
+                        <rect x="100" y="50" width="60" height="14" rx="7" fill="#0d1117"/>
+                        <!-- App icons row 1 -->
+                        <rect x="62" y="82" width="34" height="34" rx="9" fill="#e30019" opacity="0.9"/>
+                        <rect x="104" y="82" width="34" height="34" rx="9" fill="#3b82f6" opacity="0.9"/>
+                        <rect x="146" y="82" width="34" height="34" rx="9" fill="#10b981" opacity="0.9"/>
+                        <rect x="62" y="126" width="34" height="34" rx="9" fill="#f59e0b" opacity="0.9"/>
+                        <rect x="104" y="126" width="34" height="34" rx="9" fill="#8b5cf6" opacity="0.9"/>
+                        <rect x="146" y="126" width="34" height="34" rx="9" fill="#ec4899" opacity="0.9"/>
+                        <!-- Small app icons row 2 -->
+                        <rect x="62" y="170" width="34" height="34" rx="9" fill="#06b6d4" opacity="0.9"/>
+                        <rect x="104" y="170" width="34" height="34" rx="9" fill="#e30019" opacity="0.7"/>
+                        <rect x="146" y="170" width="34" height="34" rx="9" fill="#6366f1" opacity="0.9"/>
+                        <!-- Wallpaper gradient bar -->
+                        <rect x="48" y="218" width="164" height="60" fill="url(#wallGrad)" opacity="0.4" rx="4"/>
+                        <!-- Dock area -->
+                        <rect x="56" y="292" width="152" height="44" rx="12" fill="rgba(255,255,255,0.12)"/>
+                        <rect x="68" y="300" width="30" height="30" rx="8" fill="#e30019"/>
+                        <rect x="108" y="300" width="30" height="30" rx="8" fill="#3b82f6"/>
+                        <rect x="148" y="300" width="30" height="30" rx="8" fill="#10b981"/>
+                        <!-- Camera module -->
+                        <rect x="88" y="342" width="84" height="6" rx="3" fill="rgba(255,255,255,0.15)"/>
+                        <!-- Volume buttons -->
+                        <rect x="24" y="90" width="6" height="28" rx="3" fill="#b0b8c9"/>
+                        <rect x="24" y="128" width="6" height="28" rx="3" fill="#b0b8c9"/>
+                        <!-- Power button -->
+                        <rect x="230" y="110" width="6" height="40" rx="3" fill="#b0b8c9"/>
+                        <!-- Camera bump top -->
+                        <rect x="86" y="12" width="88" height="20" rx="8" fill="url(#camBump)"/>
+                        <circle cx="118" cy="22" r="7" fill="#1a1a2e" stroke="#3a3a5c" stroke-width="1.5"/>
+                        <circle cx="118" cy="22" r="4" fill="#0d1117"/>
+                        <circle cx="118" cy="22" r="2" fill="#1e3a5f"/>
+                        <circle cx="138" cy="22" r="7" fill="#1a1a2e" stroke="#3a3a5c" stroke-width="1.5"/>
+                        <circle cx="138" cy="22" r="4" fill="#0d1117"/>
+                        <circle cx="138" cy="22" r="2" fill="#1e3a5f"/>
+                        <circle cx="158" cy="22" r="5" fill="#e8b84b" opacity="0.8"/>
+                        <!-- Screen shine -->
+                        <rect x="48" y="46" width="55" height="298" rx="12" fill="url(#shine)" opacity="0.06"/>
+                        <defs>
+                            <linearGradient id="phoneGrad" x1="30" y1="10" x2="230" y2="390" gradientUnits="userSpaceOnUse">
+                                <stop offset="0%" stop-color="#2d2d3a"/>
+                                <stop offset="50%" stop-color="#1a1a2e"/>
+                                <stop offset="100%" stop-color="#0f0f1a"/>
+                            </linearGradient>
+                            <linearGradient id="sideHighlight" x1="30" y1="10" x2="230" y2="10" gradientUnits="userSpaceOnUse">
+                                <stop offset="0%" stop-color="white" stop-opacity="0.08"/>
+                                <stop offset="40%" stop-color="white" stop-opacity="0"/>
+                                <stop offset="100%" stop-color="white" stop-opacity="0"/>
+                            </linearGradient>
+                            <linearGradient id="screenGrad" x1="48" y1="46" x2="48" y2="344" gradientUnits="userSpaceOnUse">
+                                <stop offset="0%" stop-color="#1e2a4a"/>
+                                <stop offset="100%" stop-color="#0d1117"/>
+                            </linearGradient>
+                            <linearGradient id="wallGrad" x1="48" y1="218" x2="212" y2="278" gradientUnits="userSpaceOnUse">
+                                <stop offset="0%" stop-color="#e30019"/>
+                                <stop offset="100%" stop-color="#3b82f6"/>
+                            </linearGradient>
+                            <linearGradient id="camBump" x1="86" y1="12" x2="174" y2="32" gradientUnits="userSpaceOnUse">
+                                <stop offset="0%" stop-color="#2d2d3a"/>
+                                <stop offset="100%" stop-color="#1a1a2e"/>
+                            </linearGradient>
+                            <linearGradient id="shine" x1="48" y1="46" x2="103" y2="46" gradientUnits="userSpaceOnUse">
+                                <stop offset="0%" stop-color="white"/>
+                                <stop offset="100%" stop-color="white" stop-opacity="0"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
                 </div>
             </div>
         </div>

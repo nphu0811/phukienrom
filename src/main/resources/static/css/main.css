@@ -115,7 +115,8 @@ ul { list-style: none; }
 .nav-link:hover { color: white; }
 .nav-link:focus-visible { outline: 2px solid white; outline-offset: 2px; border-radius: 4px; }
 
-.cart-icon { color: white; font-size: 1.3rem; position: relative; padding: 4px; display: flex; align-items: center; }
+.cart-icon { color: white; font-size: 1.3rem; position: relative; padding: 8px 10px; display: flex; align-items: center; cursor: pointer; border-radius: var(--radius); transition: var(--transition); min-width: 40px; min-height: 40px; justify-content: center; }
+.cart-icon:hover { background: rgba(255,255,255,.1); }
 .cart-icon:focus-visible { outline: 2px solid white; outline-offset: 4px; border-radius: 4px; }
 .cart-badge {
   position: absolute; top: -6px; right: -8px;
@@ -136,10 +137,11 @@ ul { list-style: none; }
 .cat-link:focus-visible { outline: 2px solid rgba(255,255,255,.8); outline-offset: -2px; }
 
 /* User dropdown - JS controlled */
-.user-menu { position: relative; }
+.user-menu { position: relative; display: flex; align-items: center; gap: 4px; }
 .dropdown-toggle {
-  color: white; padding: 6px 12px; border-radius: var(--radius);
-  transition: var(--transition); font-size: 14px; display: flex; align-items: center; gap: 4px;
+  color: white; padding: 8px 12px; border-radius: var(--radius);
+  transition: var(--transition); font-size: 14px; display: flex; align-items: center; gap: 6px;
+  cursor: pointer; min-height: 40px; user-select: none;
 }
 .dropdown-toggle:hover { background: rgba(255,255,255,.1); }
 .dropdown-toggle:focus-visible { outline: 2px solid white; outline-offset: 2px; }
@@ -214,6 +216,8 @@ ul { list-style: none; }
 .hero-home { background: linear-gradient(160deg, #1a1a2e 0%, #16213e 100%); }
 .hero-image-wrap { display: flex; justify-content: center; align-items: center; }
 .hero-image { max-height: 300px; object-fit: contain; filter: drop-shadow(0 20px 40px rgba(0,0,0,.3)); }
+.hero-phone-svg { max-height: 340px; width: auto; filter: drop-shadow(0 24px 48px rgba(0,0,0,.5)); animation: phoneFloat 3.5s ease-in-out infinite; }
+@keyframes phoneFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
 /* ══════════════════════ BRANDS ══════════════════════ */
 .brands-section { margin: 24px auto; }
