@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <div class="hero-image-wrap fade-in">
-                    <svg class="hero-image hero-phone-svg" viewBox="0 0 260 400" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Äiá»‡n thoáº¡i chÃ­nh hÃ£ng">
+                    <svg class="hero-image hero-phone-svg" viewBox="0 0 260 400" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Điện Thoại Chính Hãng">
                         <!-- Phone body -->
                         <rect x="30" y="10" width="200" height="380" rx="28" fill="url(#phoneGrad)"/>
                         <!-- Side highlight -->
@@ -141,7 +141,9 @@
                 <a th:href="@{/pages/huong-dan-mua-hang}" class="hero-secondary btn-press">Xem chi tiết</a>
             </div>
         </div>
-        <div class="promo-visual"></div>
+        <div class="promo-visual">
+            <img th:src="@{/images/promo-banner.png}" alt="Promo Banner">
+        </div>
     </section>
 
     <!-- FEATURED PRODUCTS -->
@@ -193,8 +195,8 @@
         <div th:if="${featuredProducts != null and featuredProducts.isEmpty()}"
              class="empty-state">
             <span class="emoji">😢</span>
-            <p>ChÆ°a cÃ³ sáº£n pháº©m ná»•i báº­t.</p>
-            <a th:href="@{/products}" class="btn btn-primary btn-press">Quay láº¡i sáº£n pháº©m</a>
+            <p>Chưa có sản phẩm nổi bật.</p>
+            <a th:href="@{/products}" class="btn btn-primary btn-press">Quay lại sản phẩm</a>
         </div>
     </section>
 
@@ -276,8 +278,8 @@
         </div>
         <div th:if="${newestProducts != null and newestProducts.isEmpty()}" class="empty-state">
             <span class="emoji">😢</span>
-            <p>ChÆ°a cÃ³ sáº£n pháº©m má»›i.</p>
-            <a th:href="@{/products}" class="btn btn-primary btn-press">Quay láº¡i sáº£n pháº©m</a>
+            <p>Chưa có sản phẩm mới.</p>
+            <a th:href="@{/products}" class="btn btn-primary btn-press">Quay lại sản phẩm</a>
         </div>
     </section>
 </main>
