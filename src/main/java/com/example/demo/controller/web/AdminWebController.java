@@ -91,6 +91,21 @@ public class AdminWebController {
         return "admin/orders";
     }
 
+    @GetMapping("/orders/{id}")
+    @Transactional(readOnly = true)
+    public String orderDetail(@PathVariable Long id, Model model) {
+        com.example.demo.domain.entity.Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid order Id:" + id));
+        
+        // lazy init items
+        order.getItems().size();
+        
+        model.addAttribute("order", order);
+        model.addAttribute("pageTitle", "Chi tiết đơn hàng " + order.getOrderCode());
+        model.addAttribute("statuses", OrderStatus.values());
+        return "admin/order-detail";
+    }
+
     @GetMapping("/users")
     public String users(@RequestParam(required = false) String keyword,
                          @RequestParam(defaultValue = "0") int page, Model model) {

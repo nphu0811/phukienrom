@@ -19,7 +19,7 @@
         <div th:each="item : ${order.items}" class="order-item-row flex-between py-10 border-bottom">
             <div>
                 <p class="body" th:text="${item.productName}"></p>
-                <p class="caption" th:text="${item.variantName}"></p>
+                <p class="caption" th:text="${item.variantInfo}"></p>
                 <p class="caption" th:text="'x' + ${item.quantity}"></p>
             </div>
             <p class="body fw-700"
@@ -34,7 +34,17 @@
     <div class="auth-card">
         <h3 class="h3 mb-12">Thông tin giao hàng</h3>
         <p class="caption" th:text="${order.shippingAddress}"></p>
-        <p class="body mt-12">Trạng thái: <strong th:text="${order.status}"></strong></p>
+        <p class="body mt-12">Trạng thái: 
+            <strong th:switch="${order.status.name()}">
+                <span th:case="'PENDING'">Chờ xử lý</span>
+                <span th:case="'PROCESSING'">Đã xác nhận</span>
+                <span th:case="'SHIPPING'">Đang giao</span>
+                <span th:case="'COMPLETED'">Hoàn thành</span>
+                <span th:case="'CANCELLED'">Đã hủy</span>
+                <span th:case="'RETURNED'">Đã trả hàng</span>
+                <span th:case="*" th:text="${order.status}"></span>
+            </strong>
+        </p>
     </div>
 </main>
 
