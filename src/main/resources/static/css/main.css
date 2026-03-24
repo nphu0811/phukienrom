@@ -390,11 +390,20 @@ ul { list-style: none; }
   aspect-ratio: 4/3; border-radius: 16px;
   background: radial-gradient(circle at 40% 40%, rgba(255,45,47,.25), transparent 65%), #0f0f0f;
   border: 1px solid var(--border);
-  position: relative; overflow: hidden;
+  position: relative;
+  overflow: visible;
+  padding-top: 18px;
 }
 .promo-visual::after {
   content: ''; position: absolute; inset: 0;
   background: radial-gradient(circle at 70% 30%, rgba(255,255,255,.05), transparent 55%);
+}
+.promo-visual .hero-phone-svg {
+  position: absolute;
+  top: -28px;
+  right: -10px;
+  width: 120%;
+  max-width: 320px;
 }
 
 /* ══════════════════════ BRANDS ══════════════════════ */
@@ -629,11 +638,24 @@ ul { list-style: none; }
 .variant-label { font-size: 14px; font-weight: 700; display: block; margin-bottom: 8px; }
 .variant-options { display: flex; flex-wrap: wrap; gap: 8px; }
 .variant-btn {
-  padding: 7px 16px; border: 1.5px solid var(--border); border-radius: var(--radius);
-  font-size: 13px; transition: var(--transition); background: #111; cursor: pointer;
-  font-family: var(--font); font-weight: 500;
+  padding: 7px 16px;
+  border: 1.5px solid #2a2a2a;
+  border-radius: var(--radius);
+  font-size: 13px;
+  transition: var(--transition);
+  background: linear-gradient(145deg, #1e1e1e, #161616);
+  color: #f8fafc;
+  cursor: pointer;
+  font-family: var(--font);
+  font-weight: 500;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.04), 0 10px 22px rgba(0,0,0,.45);
 }
-.variant-btn:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-1px); }
+.variant-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 30px rgba(227,0,25,.25);
+}
 .variant-btn:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
 .variant-btn.selected { border-color: var(--primary); background: var(--primary-soft); color: var(--primary); font-weight: 700; }
 
