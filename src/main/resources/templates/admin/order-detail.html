@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title th:text="${pageTitle}">Chi tiết đơn hàng | Admin</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
@@ -37,28 +38,30 @@
             <div class="col-8">
                 <div class="surface-card mb-16">
                     <h3 class="h3 mb-12 border-bottom pb-8">Sản phẩm</h3>
-                    <table class="table-simple">
-                        <tr>
-                            <th>Hình ảnh</th>
-                            <th>Mã SP / Tên SP</th>
-                            <th>Phân loại</th>
-                            <th class="text-center">Số lượng</th>
-                            <th class="text-right">Đơn giá</th>
-                            <th class="text-right">Thành tiền</th>
-                        </tr>
-                        <tr th:each="item : ${order.items}">
-                            <td>
-                                <img th:src="${item.productImage}" alt="img" width="50" style="border-radius:4px;">
-                            </td>
-                            <td>
-                                <strong th:text="${item.productName}"></strong>
-                            </td>
-                            <td class="caption" th:text="${item.variantInfo}"></td>
-                            <td class="text-center" th:text="${item.quantity}"></td>
-                            <td class="text-right" th:text="${#numbers.formatDecimal(item.unitPrice,0,'COMMA',0,'POINT') + '₫'}"></td>
-                            <td class="text-right fw-700 text-primary" th:text="${#numbers.formatDecimal(item.unitPrice * item.quantity, 0, 'COMMA', 0, 'POINT') + '₫'}"></td>
-                        </tr>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table-simple">
+                            <tr>
+                                <th>Hình ảnh</th>
+                                <th>Mã SP / Tên SP</th>
+                                <th>Phân loại</th>
+                                <th class="text-center">Số lượng</th>
+                                <th class="text-right">Đơn giá</th>
+                                <th class="text-right">Thành tiền</th>
+                            </tr>
+                            <tr th:each="item : ${order.items}">
+                                <td>
+                                    <img th:src="${item.productImage}" alt="img" width="50" style="border-radius:4px;">
+                                </td>
+                                <td>
+                                    <strong th:text="${item.productName}"></strong>
+                                </td>
+                                <td class="caption" th:text="${item.variantInfo}"></td>
+                                <td class="text-center" th:text="${item.quantity}"></td>
+                                <td class="text-right" th:text="${#numbers.formatDecimal(item.unitPrice,0,'COMMA',0,'POINT') + '₫'}"></td>
+                                <td class="text-right fw-700 text-primary" th:text="${#numbers.formatDecimal(item.unitPrice * item.quantity, 0, 'COMMA', 0, 'POINT') + '₫'}"></td>
+                            </tr>
+                        </table>
+                    </div>
                     <div class="text-right mt-16 pt-16 border-top">
                         <p>Tạm tính: <strong th:text="${#numbers.formatDecimal(order.subtotal,0,'COMMA',0,'POINT') + '₫'}"></strong></p>
                         <p>Phí vận chuyển: <strong th:text="${#numbers.formatDecimal(order.shippingFee,0,'COMMA',0,'POINT') + '₫'}"></strong></p>
@@ -90,3 +93,4 @@
 <script th:src="@{/js/main.v2.js}"></script>
 </body>
 </html>
+

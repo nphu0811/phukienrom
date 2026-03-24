@@ -1,7 +1,8 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${pageTitle ?: 'Sản phẩm'} + ' | Phụ Kiện Rởm'">Sản Phẩm</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle ?: 'S?n ph?m'} + ' | Ph? Ki?n R?m'">S?n Ph?m</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
@@ -11,16 +12,16 @@
     <section class="category-strip">
         <div class="strip-scroll">
             <a th:href="@{/products(category='dien-thoai')}" class="cat-card hover-lift btn-press">
-                <span>📱</span><strong>Điện thoại</strong>
+                <span>??</span><strong>�i?n tho?i</strong>
             </a>
             <a th:href="@{/products(category='tai-nghe')}" class="cat-card hover-lift btn-press">
-                <span>🎧</span><strong>Tai nghe</strong>
+                <span>??</span><strong>Tai nghe</strong>
             </a>
             <a th:href="@{/products(category='sac-pin')}" class="cat-card hover-lift btn-press">
-                <span>🔋</span><strong>Sạc & Pin</strong>
+                <span>??</span><strong>S?c & Pin</strong>
             </a>
             <a th:href="@{/products(category='may-tinh-bang')}" class="cat-card hover-lift btn-press">
-                <span>💻</span><strong>Tablet</strong>
+                <span>??</span><strong>Tablet</strong>
             </a>
         </div>
     </section>
@@ -33,22 +34,22 @@
                 <input type="hidden" name="keyword" th:value="${keyword}">
 
                 <div class="filter-group">
-                    <h4 class="filter-title">Danh mục</h4>
+                    <h4 class="filter-title">Danh m?c</h4>
                     <div th:each="cat : ${categories}" class="filter-item">
                         <label>
                             <input type="radio" name="category" th:value="${cat.slug}"
                                    th:checked="${category == cat.slug}">
-                            <span th:text="${cat.name}">Điện thoại</span>
+                            <span th:text="${cat.name}">�i?n tho?i</span>
                         </label>
                     </div>
                     <label class="filter-item">
                         <input type="radio" name="category" value="" th:checked="${category == null}">
-                        <span>Tất cả</span>
+                        <span>T?t c?</span>
                     </label>
                 </div>
 
                 <div class="filter-group">
-                    <h4 class="filter-title">Thương hiệu</h4>
+                    <h4 class="filter-title">Thuong hi?u</h4>
                     <div th:each="b : ${brands}" class="filter-item">
                         <label>
                             <input type="radio" name="brand" th:value="${b.slug}"
@@ -58,35 +59,35 @@
                     </div>
                     <label class="filter-item">
                         <input type="radio" name="brand" value="" th:checked="${brand == null}">
-                        <span>Tất cả</span>
+                        <span>T?t c?</span>
                     </label>
                 </div>
 
                 <div class="filter-group">
-                    <h4 class="filter-title">Khoảng giá</h4>
+                    <h4 class="filter-title">Kho?ng gi�</h4>
                     <div class="price-ranges">
-                        <label><input type="radio" name="priceRange" value="" th:checked="${priceRange == null}"> Tất cả</label>
-                        <label><input type="radio" name="priceRange" value="0-3000000" th:checked="${priceRange == '0-3000000'}"> Dưới 3 triệu</label>
-                        <label><input type="radio" name="priceRange" value="3000000-7000000" th:checked="${priceRange == '3000000-7000000'}"> 3 - 7 triệu</label>
-                        <label><input type="radio" name="priceRange" value="7000000-15000000" th:checked="${priceRange == '7000000-15000000'}"> 7 - 15 triệu</label>
-                        <label><input type="radio" name="priceRange" value="15000000-999999999" th:checked="${priceRange == '15000000-999999999'}"> Trên 15 triệu</label>
+                        <label><input type="radio" name="priceRange" value="" th:checked="${priceRange == null}"> T?t c?</label>
+                        <label><input type="radio" name="priceRange" value="0-3000000" th:checked="${priceRange == '0-3000000'}"> Du?i 3 tri?u</label>
+                        <label><input type="radio" name="priceRange" value="3000000-7000000" th:checked="${priceRange == '3000000-7000000'}"> 3 - 7 tri?u</label>
+                        <label><input type="radio" name="priceRange" value="7000000-15000000" th:checked="${priceRange == '7000000-15000000'}"> 7 - 15 tri?u</label>
+                        <label><input type="radio" name="priceRange" value="15000000-999999999" th:checked="${priceRange == '15000000-999999999'}"> Tr�n 15 tri?u</label>
                     </div>
                 </div>
 
-                <a th:href="@{/products}" class="btn btn-outline btn-block mt-12">Xóa bộ lọc</a>
+                <a th:href="@{/products}" class="btn btn-outline btn-block mt-12">X�a b? l?c</a>
             </form>
         </aside>
 
         <!-- PRODUCT LIST -->
         <section class="product-list-section">
             <div class="list-header">
-                <p th:text="'Tìm thấy ' + ${products.totalElements} + ' sản phẩm'" class="result-count"></p>
+                <p th:text="'T�m th?y ' + ${products.totalElements} + ' s?n ph?m'" class="result-count"></p>
                 <select class="sort-select" onchange="changeSort(this.value)">
-                    <option value="createdAt,desc" th:selected="${sort == 'createdAt,desc'}">Mới nhất</option>
-                    <option value="soldCount,desc" th:selected="${sort == 'soldCount,desc'}">Bán chạy nhất</option>
-                    <option value="basePrice,asc" th:selected="${sort == 'basePrice,asc'}">Giá tăng dần</option>
-                    <option value="basePrice,desc" th:selected="${sort == 'basePrice,desc'}">Giá giảm dần</option>
-                    <option value="avgRating,desc" th:selected="${sort == 'avgRating,desc'}">Đánh giá cao nhất</option>
+                    <option value="createdAt,desc" th:selected="${sort == 'createdAt,desc'}">M?i nh?t</option>
+                    <option value="soldCount,desc" th:selected="${sort == 'soldCount,desc'}">B�n ch?y nh?t</option>
+                    <option value="basePrice,asc" th:selected="${sort == 'basePrice,asc'}">Gi� tang d?n</option>
+                    <option value="basePrice,desc" th:selected="${sort == 'basePrice,desc'}">Gi� gi?m d?n</option>
+                    <option value="avgRating,desc" th:selected="${sort == 'avgRating,desc'}">��nh gi� cao nh?t</option>
                 </select>
             </div>
 
@@ -103,15 +104,15 @@
                             <p class="product-brand" th:text="${product.brandName}"></p>
                             <h3 class="product-name" th:text="${product.name}"></h3>
                             <div class="rating-row">
-                                <span th:text="'★ ' + ${product.avgRating}"></span>
-                                <span th:text="'(' + ${product.reviewCount} + ' đánh giá)'"></span>
+                                <span th:text="'? ' + ${product.avgRating}"></span>
+                                <span th:text="'(' + ${product.reviewCount} + ' d�nh gi�)'"></span>
                             </div>
                             <div class="product-price">
                                 <span class="price-current"
-                                      th:text="${#numbers.formatDecimal(product.salePrice ?: product.basePrice, 0, 'COMMA', 0, 'POINT') + '₫'}">
+                                      th:text="${#numbers.formatDecimal(product.salePrice ?: product.basePrice, 0, 'COMMA', 0, 'POINT') + '?'}">
                                 </span>
                                 <span th:if="${product.salePrice != null}" class="price-original"
-                                      th:text="${#numbers.formatDecimal(product.basePrice, 0, 'COMMA', 0, 'POINT') + '₫'}">
+                                      th:text="${#numbers.formatDecimal(product.basePrice, 0, 'COMMA', 0, 'POINT') + '?'}">
                                 </span>
                             </div>
                         </div>
@@ -119,15 +120,15 @@
                     <button class="btn btn-primary btn-add-cart btn-press"
                             th:attr="data-slug=${product.slug}"
                             onclick="quickAddToCart(this)">
-                        Thêm vào giỏ
+                        Th�m v�o gi?
                     </button>
                 </div>
             </div>
 
             <div th:if="${products.content.isEmpty()}" class="empty-state">
-                <span class="emoji">😢</span>
-                <p>Không tìm thấy sản phẩm phù hợp.</p>
-                <a th:href="@{/products}" class="btn btn-primary btn-press">Quay lại</a>
+                <span class="emoji">??</span>
+                <p>Kh�ng t�m th?y s?n ph?m ph� h?p.</p>
+                <a th:href="@{/products}" class="btn btn-primary btn-press">Quay l?i</a>
             </div>
 
             <div class="pagination" th:if="${products.totalPages > 1}">
@@ -138,15 +139,15 @@
                        class="page-btn">&#8249;</a>
 
                     <th:block th:each="i : ${#numbers.sequence(0, total - 1)}">
-                        <!-- Hiện trang nếu: đầu, cuối, gần trang hiện tại, hoặc là dấu ... -->
+                        <!-- Hi?n trang n?u: d?u, cu?i, g?n trang hi?n t?i, ho?c l� d?u ... -->
                         <th:block th:if="${i == 0 || i == total - 1 || (i >= cur - 2 && i <= cur + 2)}">
                             <a th:href="@{/products(page=${i}, sort=${sort}, category=${category}, brand=${brand}, priceRange=${priceRange}, keyword=${keyword})}"
                                th:text="${i + 1}"
                                th:classappend="${i == cur} ? 'page-btn active' : 'page-btn'"></a>
                         </th:block>
-                        <!-- Dấu ... giữa trang đầu và vùng hiện tại -->
+                        <!-- D?u ... gi?a trang d?u v� v�ng hi?n t?i -->
                         <span th:if="${i == 1 && cur > 3}" class="page-btn page-ellipsis">...</span>
-                        <!-- Dấu ... giữa vùng hiện tại và trang cuối -->
+                        <!-- D?u ... gi?a v�ng hi?n t?i v� trang cu?i -->
                         <span th:if="${i == total - 2 && cur < total - 4}" class="page-btn page-ellipsis">...</span>
                     </th:block>
 
@@ -172,3 +173,4 @@
 </script>
 </body>
 </html>
+

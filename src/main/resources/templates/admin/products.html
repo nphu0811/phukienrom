@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>Sản phẩm | Admin</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
@@ -27,40 +28,42 @@
         </form>
 
         <div class="surface-card">
-            <table class="table-simple">
-                <tr>
-                    <th>Ảnh</th>
-                    <th>Tên</th>
-                    <th>Danh mục</th>
-                    <th>Thương hiệu</th>
-                    <th class="text-right">Giá</th>
-                    <th class="text-center">Đã bán</th>
-                    <th class="text-center">Trạng thái</th>
-                    <th class="text-center">Thao tác</th>
-                </tr>
-                <tr th:each="p : ${products.content}">
-                    <td><img th:src="${p.thumbnailUrl}" class="thumb-48"></td>
-                    <td class="fw-700 maxw-220 ellipsis" th:text="${p.name}"></td>
-                    <td class="caption" th:text="${p.categoryName}"></td>
-                    <td class="caption" th:text="${p.brandName}"></td>
-                    <td class="text-right fw-700 text-primary"
-                        th:text="${#numbers.formatDecimal(p.salePrice ?: p.basePrice,0,'COMMA',0,'POINT') + '₫'}"></td>
-                    <td class="text-center caption" th:text="${p.soldCount ?: 0}"></td>
-                    <td class="text-center">
-                        <span class="status-pill" th:classappend="${p.active} ? ' status-green' : ' status-red'"
-                              th:text="${p.active} ? 'Đang bán' : 'Ẩn'"></span>
-                    </td>
-                    <td class="text-center" style="white-space: nowrap;">
-                        <a th:href="@{/admin/products/edit/{id}(id=${p.id})}" class="btn btn-outline">Sửa</a>
-                        <button type="button" class="btn" style="background-color: #ef4444; color: white;"
-                                th:data-id="${p.id}" th:data-name="${p.name}"
-                                onclick="deleteProduct(this)">Xóa</button>
-                    </td>
-                </tr>
-                <tr th:if="${products.totalElements == 0}">
-                    <td colspan="8" class="text-center text-muted py-10">Chưa có sản phẩm.</td>
-                </tr>
-            </table>
+            <div class="table-responsive">
+                <table class="table-simple">
+                    <tr>
+                        <th>Ảnh</th>
+                        <th>Tên</th>
+                        <th>Danh mục</th>
+                        <th>Thương hiệu</th>
+                        <th class="text-right">Giá</th>
+                        <th class="text-center">Đã bán</th>
+                        <th class="text-center">Trạng thái</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                    <tr th:each="p : ${products.content}">
+                        <td><img th:src="${p.thumbnailUrl}" class="thumb-48"></td>
+                        <td class="fw-700 maxw-220 ellipsis" th:text="${p.name}"></td>
+                        <td class="caption" th:text="${p.categoryName}"></td>
+                        <td class="caption" th:text="${p.brandName}"></td>
+                        <td class="text-right fw-700 text-primary"
+                            th:text="${#numbers.formatDecimal(p.salePrice ?: p.basePrice,0,'COMMA',0,'POINT') + '₫'}"></td>
+                        <td class="text-center caption" th:text="${p.soldCount ?: 0}"></td>
+                        <td class="text-center">
+                            <span class="status-pill" th:classappend="${p.active} ? ' status-green' : ' status-red'"
+                                  th:text="${p.active} ? 'Đang bán' : 'Ẩn'"></span>
+                        </td>
+                        <td class="text-center" style="white-space: nowrap;">
+                            <a th:href="@{/admin/products/edit/{id}(id=${p.id})}" class="btn btn-outline">Sửa</a>
+                            <button type="button" class="btn" style="background-color: #ef4444; color: white;"
+                                    th:data-id="${p.id}" th:data-name="${p.name}"
+                                    onclick="deleteProduct(this)">Xóa</button>
+                        </td>
+                    </tr>
+                    <tr th:if="${products.totalElements == 0}">
+                        <td colspan="8" class="text-center text-muted py-10">Chưa có sản phẩm.</td>
+                    </tr>
+                </table>
+            </div>
 
             <div th:if="${products.totalPages > 1}" class="pagination">
                 <a th:if="${products.number > 0}"
@@ -110,3 +113,4 @@
 </script>
 </body>
 </html>
+
