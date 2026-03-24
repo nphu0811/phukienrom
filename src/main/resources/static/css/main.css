@@ -638,14 +638,19 @@ ul { list-style: none; }
 .variant-group { margin-bottom: 14px; }
 .variant-label { font-size: 14px; font-weight: 700; display: block; margin-bottom: 8px; }
 .variant-options { display: flex; flex-wrap: wrap; gap: 8px; }
+.variant-options {
+  background: rgba(255,255,255,.03);
+  padding: 6px;
+  border-radius: 12px;
+}
 .variant-btn {
   padding: 7px 16px;
-  border: 1.5px solid #ff4d5a;
+  border: 1.5px solid #ff6b73;
   border-radius: var(--radius);
   font-size: 13px;
   transition: var(--transition);
-  background: #141414;
-  color: #ffffff;
+  background: #151515 !important;
+  color: #ffffff !important;
   cursor: pointer;
   font-family: var(--font);
   font-weight: 500;
@@ -663,6 +668,12 @@ ul { list-style: none; }
   background: var(--primary);
   color: #ffffff;
   font-weight: 700;
+  box-shadow: 0 14px 32px rgba(227,0,25,.3);
+}
+.variant-btn.active {
+  border-color: var(--primary) !important;
+  background: var(--primary) !important;
+  color: #ffffff !important;
   box-shadow: 0 14px 32px rgba(227,0,25,.3);
 }
 
