@@ -96,13 +96,12 @@
             <a th:href="@{/products(category='dien-thoai')}" class="cat-link">Điện thoại</a>
             <a th:href="@{/products(category='may-tinh-bang')}" class="cat-link">Máy tính bảng</a>
             <a th:href="@{/products(category='tai-nghe')}" class="cat-link">Tai nghe</a>
-            <a th:href="@{/products(category='sac-du-phong')}" class="cat-link">Sạc & Pin</a>
+            <a th:href="@{/products(category='sac-pin')}" class="cat-link">Sạc & Pin</a>
             <a th:href="@{/products(category='op-lung')}" class="cat-link">Ốp lưng</a>
             <a th:href="@{/products(category='phu-kien')}" class="cat-link">Phụ kiện khác</a>
         </div>
     </div>
-</nav>
-<script>
+    <script>
 // ── Dropdown toggle (dùng DOMContentLoaded để tránh xung đột với main.v2.js) ──
 document.addEventListener('DOMContentLoaded', function() {
     const btn  = document.getElementById('userMenuBtn');
@@ -182,7 +181,8 @@ function setLoading(btn, loading) {
         if (btn._originalText) btn.innerHTML = btn._originalText;
     }
 }
-</script>
+    </script>
+</nav>
 
 <!-- MAIN CONTENT -->
 <main class="main-content">

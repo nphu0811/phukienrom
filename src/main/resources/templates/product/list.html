@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${pageTitle ?: 'Sáº£n pháº©m'} + ' | Phá»¥ Kiá»‡n Rom'">Sáº£n pháº©m</title>
+    <title th:text="${pageTitle ?: 'Sản phẩm'} + ' | Phụ Kiện Rởm'">Sản Phẩm</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
@@ -16,7 +16,7 @@
             <a th:href="@{/products(category='tai-nghe')}" class="cat-card hover-lift btn-press">
                 <span>🎧</span><strong>Tai nghe</strong>
             </a>
-            <a th:href="@{/products(category='sac-du-phong')}" class="cat-card hover-lift btn-press">
+            <a th:href="@{/products(category='sac-pin')}" class="cat-card hover-lift btn-press">
                 <span>🔋</span><strong>Sạc & Pin</strong>
             </a>
             <a th:href="@{/products(category='may-tinh-bang')}" class="cat-card hover-lift btn-press">
@@ -131,11 +131,30 @@
             </div>
 
             <div class="pagination" th:if="${products.totalPages > 1}">
-                <a th:each="i : ${#numbers.sequence(0, products.totalPages-1)}"
-                   th:href="@{/products(page=${i}, sort=${sort}, category=${category}, brand=${brand}, priceRange=${priceRange}, keyword=${keyword})}"
-                   th:text="${i + 1}"
-                   th:classappend="${i == products.number} ? 'page-btn active' : 'page-btn'">
-                </a>
+                <th:block th:with="cur=${products.number}, total=${products.totalPages}">
+                    <!-- Prev -->
+                    <a th:if="${cur > 0}"
+                       th:href="@{/products(page=${cur - 1}, sort=${sort}, category=${category}, brand=${brand}, priceRange=${priceRange}, keyword=${keyword})}"
+                       class="page-btn">&#8249;</a>
+
+                    <th:block th:each="i : ${#numbers.sequence(0, total - 1)}">
+                        <!-- Hiện trang nếu: đầu, cuối, gần trang hiện tại, hoặc là dấu ... -->
+                        <th:block th:if="${i == 0 || i == total - 1 || (i >= cur - 2 && i <= cur + 2)}">
+                            <a th:href="@{/products(page=${i}, sort=${sort}, category=${category}, brand=${brand}, priceRange=${priceRange}, keyword=${keyword})}"
+                               th:text="${i + 1}"
+                               th:classappend="${i == cur} ? 'page-btn active' : 'page-btn'"></a>
+                        </th:block>
+                        <!-- Dấu ... giữa trang đầu và vùng hiện tại -->
+                        <span th:if="${i == 1 && cur > 3}" class="page-btn page-ellipsis">...</span>
+                        <!-- Dấu ... giữa vùng hiện tại và trang cuối -->
+                        <span th:if="${i == total - 2 && cur < total - 4}" class="page-btn page-ellipsis">...</span>
+                    </th:block>
+
+                    <!-- Next -->
+                    <a th:if="${cur < total - 1}"
+                       th:href="@{/products(page=${cur + 1}, sort=${sort}, category=${category}, brand=${brand}, priceRange=${priceRange}, keyword=${keyword})}"
+                       class="page-btn">&#8250;</a>
+                </th:block>
             </div>
         </section>
     </div>

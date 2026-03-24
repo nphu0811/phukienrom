@@ -120,7 +120,7 @@
                 <a th:href="@{/products(category='tai-nghe')}" class="cat-card hover-lift btn-press">
                     <span>🎧</span><strong>Tai nghe</strong>
                 </a>
-                <a th:href="@{/products(category='sac-du-phong')}" class="cat-card hover-lift btn-press">
+                <a th:href="@{/products(category='sac-pin')}" class="cat-card hover-lift btn-press">
                     <span>🔋</span><strong>Sạc & Pin</strong>
                 </a>
                 <a th:href="@{/products(category='may-tinh-bang')}" class="cat-card hover-lift btn-press">
@@ -228,7 +228,7 @@
                                   th:text="${#numbers.formatDecimal(product.salePrice ?: product.basePrice, 0, 'COMMA', 0, 'POINT') + '₫'}">
                             </span>
                         </div>
-                        <p class="caption" th:text="'ÄÃ£ bÃ¡n: ' + ${product.soldCount}"></p>
+                        <p class="caption" th:text="'Đã Bán: ' + ${product.soldCount}"></p>
                     </div>
                 </a>
             </div>
