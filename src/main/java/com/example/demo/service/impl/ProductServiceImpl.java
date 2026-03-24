@@ -161,7 +161,7 @@ public class ProductServiceImpl implements ProductService {
         r.setBasePrice(p.getBasePrice()); r.setSalePrice(p.getSalePrice());
         r.setCategoryName(p.getCategory().getName()); r.setBrandName(p.getBrand().getName());
         r.setAvgRating(p.getAvgRating()); r.setReviewCount(p.getReviewCount());
-        r.setSoldCount(p.getSoldCount()); r.setFeatured(p.isFeatured()); r.setCreatedAt(p.getCreatedAt());
+        r.setSoldCount(p.getSoldCount()); r.setFeatured(p.isFeatured()); r.setActive(p.isActive()); r.setCreatedAt(p.getCreatedAt());
         return r;
     }
 

@@ -9,7 +9,7 @@ public class ProductResponse {
     private BigDecimal basePrice; private BigDecimal salePrice;
     private String categoryName; private String brandName;
     private BigDecimal avgRating; private Integer reviewCount; private Long soldCount;
-    private boolean featured; private LocalDateTime createdAt;
+    private boolean featured; private boolean active; private LocalDateTime createdAt;
     private List<VariantResponse> variants; private List<String> imageUrls;
 
     public ProductResponse() {}
@@ -27,6 +27,7 @@ public class ProductResponse {
     public Integer getReviewCount() { return reviewCount; } public void setReviewCount(Integer v) { this.reviewCount = v; }
     public Long getSoldCount() { return soldCount; } public void setSoldCount(Long v) { this.soldCount = v; }
     public boolean isFeatured() { return featured; } public void setFeatured(boolean featured) { this.featured = featured; }
+    public boolean isActive() { return active; } public void setActive(boolean active) { this.active = active; }
     public LocalDateTime getCreatedAt() { return createdAt; } public void setCreatedAt(LocalDateTime v) { this.createdAt = v; }
     public List<VariantResponse> getVariants() { return variants; } public void setVariants(List<VariantResponse> v) { this.variants = v; }
     public List<String> getImageUrls() { return imageUrls; } public void setImageUrls(List<String> v) { this.imageUrls = v; }
