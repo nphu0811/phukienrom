@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -66,11 +66,11 @@
                 <div class="filter-group">
                     <h4 class="filter-title">Khoảng giá</h4>
                     <div class="price-ranges">
-                        <label><input type="radio" name="priceRange" value="" th:checked="${priceRange == null}"> T?t c?</label>
-                        <label><input type="radio" name="priceRange" value="0-3000000" th:checked="${priceRange == '0-3000000'}"> Du?i 3 tri?u</label>
-                        <label><input type="radio" name="priceRange" value="3000000-7000000" th:checked="${priceRange == '3000000-7000000'}"> 3 - 7 tri?u</label>
-                        <label><input type="radio" name="priceRange" value="7000000-15000000" th:checked="${priceRange == '7000000-15000000'}"> 7 - 15 tri?u</label>
-                        <label><input type="radio" name="priceRange" value="15000000-999999999" th:checked="${priceRange == '15000000-999999999'}"> Trn 15 tri?u</label>
+                        <label><input type="radio" name="priceRange" value="" th:checked="${priceRange == null}"> Tất cả</label>
+                        <label><input type="radio" name="priceRange" value="0-3000000" th:checked="${priceRange == '0-3000000'}"> Dưới 3 triệu</label>
+                        <label><input type="radio" name="priceRange" value="3000000-7000000" th:checked="${priceRange == '3000000-7000000'}"> 3 - 7 triệu</label>
+                        <label><input type="radio" name="priceRange" value="7000000-15000000" th:checked="${priceRange == '7000000-15000000'}"> 7 - 15 triệu</label>
+                        <label><input type="radio" name="priceRange" value="15000000-999999999" th:checked="${priceRange == '15000000-999999999'}"> Trn 15 triệu</label>
                     </div>
                 </div>
 
@@ -81,7 +81,7 @@
         <!-- PRODUCT LIST -->
         <section class="product-list-section">
             <div class="list-header">
-                <p th:text="'Tm th?y ' + ${products.totalElements} + ' s?n ph?m'" class="result-count"></p>
+                <p th:text="'Tm thấy ' + ${products.totalElements} + ' sản phẩm'" class="result-count"></p>
                 <select class="sort-select" onchange="changeSort(this.value)">
                     <option value="createdAt,desc" th:selected="${sort == 'createdAt,desc'}">Mới nhất</option>
                     <option value="soldCount,desc" th:selected="${sort == 'soldCount,desc'}">Bán chạy nhất</option>
@@ -104,7 +104,7 @@
                             <p class="product-brand" th:text="${product.brandName}"></p>
                             <h3 class="product-name" th:text="${product.name}"></h3>
                             <div class="rating-row">
-                                <span th:text="'? ' + ${product.avgRating}"></span>
+                                <span th:text="'★ ' + ${product.avgRating}"></span>
                                 <span th:text="'(' + ${product.reviewCount} + ' đánh giá)'"></span>
                             </div>
                             <div class="product-price">
@@ -126,7 +126,7 @@
             </div>
 
             <div th:if="${products.content.isEmpty()}" class="empty-state">
-                <span class="emoji">??</span>
+                <span class="emoji">😢</span>
                 <p>Không tìm thấy sản phẩm phù hợp.</p>
                 <a th:href="@{/products}" class="btn btn-primary btn-press">Quay lại</a>
             </div>
