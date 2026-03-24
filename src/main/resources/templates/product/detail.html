@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${product.name} + ' | Phụ Kiện Rởm'">Sản phẩm</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
+    <style>
+        /* Force high-contrast variant buttons on detail page */
+        .variant-options { background: rgba(255,255,255,.04); padding: 8px; border-radius: 14px; }
+        .variant-btn, .variant-btn:visited {
+            color: #fff !important;
+            background: #151515 !important;
+            border: 1.5px solid #ff6b73 !important;
+        }
+        .variant-btn.active, .variant-btn.selected {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: #fff !important;
+            box-shadow: 0 14px 32px rgba(227,0,25,.3);
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{layout :: navbar}"></div>
