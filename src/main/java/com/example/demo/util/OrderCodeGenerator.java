@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
  */
 public final class OrderCodeGenerator {
 
-    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyyMMdd");
+    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyMMdd");
     private static final SecureRandom RANDOM = new SecureRandom();
 
     private OrderCodeGenerator() {}
