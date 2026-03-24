@@ -392,7 +392,7 @@ ul { list-style: none; }
   border: 1px solid var(--border);
   position: relative;
   overflow: visible;
-  padding-top: 18px;
+  padding-top: 28px;
 }
 .promo-visual::after {
   content: ''; position: absolute; inset: 0;
@@ -400,10 +400,11 @@ ul { list-style: none; }
 }
 .promo-visual .hero-phone-svg {
   position: absolute;
-  top: -28px;
-  right: -10px;
-  width: 120%;
-  max-width: 320px;
+  top: -50px;
+  right: -16px;
+  width: 125%;
+  max-width: 340px;
+  z-index: 2;
 }
 
 /* ══════════════════════ BRANDS ══════════════════════ */
@@ -639,25 +640,31 @@ ul { list-style: none; }
 .variant-options { display: flex; flex-wrap: wrap; gap: 8px; }
 .variant-btn {
   padding: 7px 16px;
-  border: 1.5px solid #2a2a2a;
+  border: 1.5px solid #ff4d5a;
   border-radius: var(--radius);
   font-size: 13px;
   transition: var(--transition);
-  background: linear-gradient(145deg, #1e1e1e, #161616);
-  color: #f8fafc;
+  background: #141414;
+  color: #ffffff;
   cursor: pointer;
   font-family: var(--font);
   font-weight: 500;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.04), 0 10px 22px rgba(0,0,0,.45);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.05), 0 10px 22px rgba(0,0,0,.45);
 }
 .variant-btn:hover {
   border-color: var(--primary);
-  color: var(--primary);
+  color: #ffffff;
   transform: translateY(-1px);
   box-shadow: 0 12px 30px rgba(227,0,25,.25);
 }
 .variant-btn:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
-.variant-btn.selected { border-color: var(--primary); background: var(--primary-soft); color: var(--primary); font-weight: 700; }
+.variant-btn.selected {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 14px 32px rgba(227,0,25,.3);
+}
 
 .stock-status { margin-bottom: 16px; font-size: 14px; }
 .in-stock { color: var(--success); font-weight: 700; }
