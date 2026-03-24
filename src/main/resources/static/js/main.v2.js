@@ -28,12 +28,13 @@ function getUser()    {
 function isLoggedIn() { return !!getToken(); }
 
 function logout() {
-  // Xóa cookie JWT
+  // Xóa cookie JWT và localStorage
   document.cookie = 'jwt=; path=/; max-age=0; SameSite=Lax';
   localStorage.removeItem('jwt_token');
   localStorage.removeItem('refresh_token');
   localStorage.removeItem('user');
-  window.location.href = '/';
+  // Gọi đúng endpoint logout của Spring Security để invalidate session
+  window.location.href = '/auth/logout';
 }
 
 // ── Inject JWT into all fetch calls via fetch wrapper ─────

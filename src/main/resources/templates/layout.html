@@ -103,42 +103,65 @@
     </div>
 </nav>
 <script>
-function toggleDropdown(e) {
-    if (e) e.stopPropagation();
+// ── Dropdown toggle (dùng DOMContentLoaded để tránh xung đột với main.v2.js) ──
+document.addEventListener('DOMContentLoaded', function() {
+    const btn  = document.getElementById('userMenuBtn');
+    const menu = document.getElementById('userDropdown');
+
+    if (btn && menu) {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const isOpen = menu.classList.contains('open');
+            closeDropdown();
+            if (!isOpen) openDropdown();
+        });
+
+        // Giữ dropdown mở khi click bên trong
+        menu.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
+
+    // Đóng khi click ra ngoài
+    document.addEventListener('click', function() {
+        closeDropdown();
+    });
+
+    // Đóng khi nhấn Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeDropdown();
+            if (btn) btn.focus();
+            const overlay = document.getElementById('mobileSearchOverlay');
+            if (overlay && overlay.classList.contains('open')) toggleMobileSearch();
+        }
+    });
+});
+
+function openDropdown() {
     const menu = document.getElementById('userDropdown');
     const btn  = document.getElementById('userMenuBtn');
     if (!menu) return;
-    const isOpen = menu.classList.contains('open');
-    menu.classList.toggle('open', !isOpen);
-    if (!isOpen) {
-        menu.style.opacity = '1'; menu.style.visibility = 'visible'; menu.style.pointerEvents = 'auto';
-    } else {
-        menu.style.opacity = '0'; menu.style.visibility = 'hidden'; menu.style.pointerEvents = 'none';
-    }
-    btn.setAttribute('aria-expanded', (!isOpen).toString());
+    menu.classList.add('open');
+    if (btn) btn.setAttribute('aria-expanded', 'true');
 }
-document.addEventListener('click', function(e) {
+
+function closeDropdown() {
     const menu = document.getElementById('userDropdown');
     const btn  = document.getElementById('userMenuBtn');
-    if (menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
-        menu.classList.remove('open');
-        menu.style.opacity = '0'; menu.style.visibility = 'hidden'; menu.style.pointerEvents = 'none';
-        btn.setAttribute('aria-expanded', 'false');
-    }
-});
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        const menu = document.getElementById('userDropdown');
-        const btn  = document.getElementById('userMenuBtn');
-        if (menu && menu.classList.contains('open')) {
-            menu.classList.remove('open');
-            btn.setAttribute('aria-expanded', 'false');
-            btn.focus();
-        }
-        const overlay = document.getElementById('mobileSearchOverlay');
-        if (overlay && overlay.classList.contains('open')) toggleMobileSearch();
-    }
-});
+    if (!menu) return;
+    menu.classList.remove('open');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+}
+
+// Giữ lại toggleDropdown để không vỡ các nơi khác có thể gọi
+function toggleDropdown(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('userDropdown');
+    if (!menu) return;
+    if (menu.classList.contains('open')) closeDropdown();
+    else openDropdown();
+}
 function toggleMobileSearch() {
     const overlay = document.getElementById('mobileSearchOverlay');
     if (!overlay) return;
@@ -172,7 +195,7 @@ function setLoading(btn, loading) {
 <footer class="footer" th:fragment="footer">
     <div class="container footer-grid">
         <div class="footer-col">
-            <h4>Phụ Kiện Rom</h4>
+            <h4>Phụ Kiện Rởm</h4>
             <p>Chuyên phân phối điện thoại và phụ kiện chính hãng tại Việt Nam.</p>
         </div>
         <div class="footer-col">
