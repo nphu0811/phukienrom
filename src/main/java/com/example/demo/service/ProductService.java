@@ -24,6 +24,10 @@ public interface ProductService {
     /** Update product with typed DTO — replaces Map<String, Object> */
     ProductResponse update(Long id, UpdateProductRequest request);
 
+    ProductResponse addImages(Long id, List<MultipartFile> images);
+
+    void deleteImage(Long productId, Long imageId);
+
     void delete(Long id);
     void toggleActive(Long id);
 }

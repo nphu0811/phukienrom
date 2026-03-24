@@ -237,6 +237,10 @@ ul { list-style: none; }
 .btn-outline { background: transparent; border: 2px solid rgba(255,255,255,.4); color: white; }
 .btn-outline:hover { background: rgba(255,255,255,.1); border-color: white; }
 
+.btn-danger { background: #e53e3e; color: white; border: none; }
+.btn-danger:hover { background: #c53030; transform: translateY(-1px); }
+.btn-danger:disabled { opacity: .6; cursor: not-allowed; }
+
 .btn-white { background: white; color: var(--primary); font-weight: 700; }
 .btn-white:hover { background: #f0f0f0; transform: translateY(-1px); }
 .btn-white:focus-visible { outline-color: white; }

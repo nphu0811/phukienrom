@@ -4,6 +4,19 @@
     <meta charset="UTF-8">
     <title th:text="${pageTitle}">Thêm/Sửa sản phẩm | Admin</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
+    <style>
+        .image-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+        .image-item { position: relative; width: 100px; height: 100px; }
+        .image-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; border: 1px solid #ddd; }
+        .image-item .btn-remove-img {
+            position: absolute; top: -6px; right: -6px;
+            background: #e53e3e; color: #fff; border: none;
+            border-radius: 50%; width: 22px; height: 22px;
+            font-size: 14px; line-height: 22px; text-align: center;
+            cursor: pointer; padding: 0;
+        }
+        .image-item .btn-remove-img:hover { background: #c53030; }
+    </style>
 </head>
 <body>
 <div class="admin-layout">
@@ -59,11 +72,28 @@
                     <label for="featured" class="form-label m-0">Sản phẩm nổi bật</label>
                 </div>
 
-                <div class="form-group col-span-2" th:if="${product.id == null}">
-                    <label class="form-label">Hình ảnh *</label>
-                    <input type="file" id="images" name="images" class="form-input" multiple accept="image/*" required>
+                <!-- Ảnh hiện tại (chỉ hiện khi edit) -->
+                <div class="form-group col-span-2" th:if="${product.id != null}">
+                    <label class="form-label">Ảnh hiện tại</label>
+                    <div class="image-grid" id="currentImages">
+                        <div th:each="img : ${product.images}" class="image-item"
+                             th:id="'img-' + ${img.id}" th:data-img-id="${img.id}">
+                            <img th:src="${img.imageUrl}" alt="Ảnh sản phẩm">
+                            <button type="button" class="btn-remove-img"
+                                    th:data-img-id="${img.id}" onclick="removeImage(this)">&times;</button>
+                        </div>
+                    </div>
+                    <small class="text-muted" th:if="${product.images.isEmpty()}">Chưa có ảnh nào.</small>
                 </div>
-                
+
+                <!-- Upload ảnh mới (khi tạo: bắt buộc; khi sửa: tùy chọn) -->
+                <div class="form-group col-span-2">
+                    <label class="form-label" th:text="${product.id == null} ? 'Hình ảnh *' : 'Thêm ảnh mới'">Hình ảnh</label>
+                    <input type="file" id="images" name="images" class="form-input" multiple accept="image/*"
+                           th:required="${product.id == null}">
+                    <small class="text-muted" th:if="${product.id != null}">Chọn file để thêm ảnh mới vào sản phẩm.</small>
+                </div>
+
                 <div class="form-group col-span-2">
                     <label class="form-label">Mô tả ngắn</label>
                     <textarea id="shortDescription" name="shortDescription" class="form-input" rows="3" th:text="${product.shortDescription}"></textarea>
@@ -83,6 +113,28 @@
 </div>
 <script th:src="@{/js/main.v2.js}"></script>
 <script>
+    async function removeImage(btn) {
+        const productId = document.getElementById('productForm').dataset.id;
+        const imageId = btn.dataset.imgId;
+        if (!confirm('Xóa ảnh này?')) return;
+        btn.disabled = true;
+        try {
+            const res = await fetch(`/api/admin/products/${productId}/images/${imageId}`, { method: 'DELETE' });
+            const data = await res.json();
+            if (res.ok) {
+                const item = document.getElementById('img-' + imageId);
+                if (item) item.remove();
+                showToast('Đã xóa ảnh', 'success');
+            } else {
+                showToast('❌ ' + (data.message || 'Lỗi khi xóa ảnh'), 'error');
+                btn.disabled = false;
+            }
+        } catch (e) {
+            showToast('❌ Lỗi mạng', 'error');
+            btn.disabled = false;
+        }
+    }
+
     document.getElementById('productForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const form = e.target;
@@ -94,7 +146,7 @@
 
         try {
             if (isEdit) {
-                // UpdateProductRequest supports name, shortDescription, description, basePrice, featured
+                // 1. Update basic info
                 const payload = {
                     name: document.getElementById('name').value,
                     shortDescription: document.getElementById('shortDescription').value,
@@ -109,18 +161,39 @@
                     body: JSON.stringify(payload)
                 });
                 const data = await res.json();
-                
-                if (res.ok) {
-                    showToast('✅ Cập nhật sản phẩm thành công', 'success');
-                    setTimeout(() => window.location.href = '/admin/products', 1500);
-                } else {
+
+                if (!res.ok) {
                     let errMsg = data.message || 'Lỗi hệ thống';
-                    if (data.data) { // Handle validation errors maybe?
+                    if (data.data) {
                         const errs = Object.values(data.data).join(', ');
                         if (errs) errMsg += ': ' + errs;
                     }
                     showToast('❌ ' + errMsg, 'error');
+                    setLoading(submitBtn, false);
+                    return;
                 }
+
+                // 2. Upload new images if any
+                const fileInput = document.getElementById('images');
+                if (fileInput.files.length > 0) {
+                    const formData = new FormData();
+                    for (let i = 0; i < fileInput.files.length; i++) {
+                        formData.append('images', fileInput.files[i]);
+                    }
+                    const imgRes = await fetch(`/api/admin/products/${productId}/images`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const imgData = await imgRes.json();
+                    if (!imgRes.ok) {
+                        showToast('⚠️ Lưu thông tin thành công nhưng upload ảnh thất bại: ' + (imgData.message || ''), 'error');
+                        setLoading(submitBtn, false);
+                        return;
+                    }
+                }
+
+                showToast('✅ Cập nhật sản phẩm thành công', 'success');
+                setTimeout(() => window.location.href = '/admin/products', 1500);
             } else {
                 // Create uses FormData with 'data' as JSON blob and 'images' as files
                 const payload = {
@@ -135,7 +208,7 @@
 
                 const formData = new FormData();
                 formData.append('data', new Blob([JSON.stringify(payload)], { type: 'application/json'}));
-                
+
                 const fileInput = document.getElementById('images');
                 if (fileInput.files.length > 0) {
                     for (let i = 0; i < fileInput.files.length; i++) {
@@ -148,7 +221,7 @@
                     body: formData
                 });
                 const data = await res.json();
-                
+
                 if (res.ok) {
                     showToast('✅ Thêm sản phẩm thành công', 'success');
                     setTimeout(() => window.location.href = '/admin/products', 1500);

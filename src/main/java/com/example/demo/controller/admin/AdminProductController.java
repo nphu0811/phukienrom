@@ -65,4 +65,19 @@ public class AdminProductController {
         productService.toggleActive(id);
         return ResponseEntity.ok(ApiResponse.success("Đã cập nhật trạng thái", null));
     }
+
+    @PostMapping(value = "/{id}/images", consumes = "multipart/form-data")
+    public ResponseEntity<ApiResponse<ProductResponse>> addImages(
+            @PathVariable Long id,
+            @RequestPart("images") List<MultipartFile> images) {
+        return ResponseEntity.ok(ApiResponse.success(productService.addImages(id, images)));
+    }
+
+    @DeleteMapping("/{id}/images/{imageId}")
+    public ResponseEntity<ApiResponse<Void>> deleteImage(
+            @PathVariable Long id,
+            @PathVariable Long imageId) {
+        productService.deleteImage(id, imageId);
+        return ResponseEntity.ok(ApiResponse.success("Đã xóa ảnh", null));
+    }
 }

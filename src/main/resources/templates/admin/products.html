@@ -50,8 +50,11 @@
                         <span class="status-pill" th:classappend="${p.active} ? ' status-green' : ' status-red'"
                               th:text="${p.active} ? 'Đang bán' : 'Ẩn'"></span>
                     </td>
-                    <td class="text-center">
+                    <td class="text-center" style="white-space: nowrap;">
                         <a th:href="@{/admin/products/edit/{id}(id=${p.id})}" class="btn btn-outline">Sửa</a>
+                        <button type="button" class="btn btn-danger"
+                                th:data-id="${p.id}" th:data-name="${p.name}"
+                                onclick="deleteProduct(this)">Xóa</button>
                     </td>
                 </tr>
                 <tr th:if="${products.totalElements == 0}">
@@ -69,5 +72,27 @@
     </main>
 </div>
 <script th:src="@{/js/main.v2.js}"></script>
+<script>
+    async function deleteProduct(btn) {
+        const id = btn.dataset.id;
+        const name = btn.dataset.name;
+        if (!confirm(`Xóa sản phẩm "${name}"?\nSản phẩm sẽ bị ẩn khỏi cửa hàng.`)) return;
+        btn.disabled = true;
+        try {
+            const res = await fetch(`/api/admin/products/${id}`, { method: 'DELETE' });
+            const data = await res.json();
+            if (res.ok) {
+                showToast('Đã xóa sản phẩm', 'success');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showToast('❌ ' + (data.message || 'Lỗi khi xóa'), 'error');
+                btn.disabled = false;
+            }
+        } catch (e) {
+            showToast('❌ Lỗi mạng', 'error');
+            btn.disabled = false;
+        }
+    }
+</script>
 </body>
 </html>

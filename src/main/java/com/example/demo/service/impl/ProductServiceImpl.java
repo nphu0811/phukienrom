@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 import com.example.demo.domain.entity.*;
 import com.example.demo.dto.response.*;
+import com.example.demo.exception.BusinessException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.*;
 import com.example.demo.service.CloudinaryService;
@@ -27,15 +28,18 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
     private final BrandRepository brandRepository;
     private final CloudinaryService cloudinaryService;
+    private final ProductImageRepository productImageRepository;
 
     public ProductServiceImpl(ProductRepository productRepository,
                                CategoryRepository categoryRepository,
                                BrandRepository brandRepository,
-                               CloudinaryService cloudinaryService) {
+                               CloudinaryService cloudinaryService,
+                               ProductImageRepository productImageRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.brandRepository = brandRepository;
         this.cloudinaryService = cloudinaryService;
+        this.productImageRepository = productImageRepository;
     }
 
     @Override @Transactional(readOnly = true)
@@ -136,6 +140,51 @@ public class ProductServiceImpl implements ProductService {
         if (request.getBasePrice() != null) product.setBasePrice(request.getBasePrice());
         if (request.getFeatured() != null) product.setFeatured(request.getFeatured());
         return toDetailResponse(productRepository.save(product));
+    }
+
+    @Override @Transactional
+    @CacheEvict(value = {"products:featured", "products:top-selling", "products:newest"}, allEntries = true)
+    public ProductResponse addImages(Long id, List<MultipartFile> images) {
+        Product product = productRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Product", id));
+        if (images == null || images.isEmpty()) throw new BusinessException("Vui lòng chọn ít nhất một ảnh");
+        int nextOrder = product.getImages().stream()
+            .mapToInt(img -> img.getDisplayOrder() != null ? img.getDisplayOrder() : 0)
+            .max().orElse(-1) + 1;
+        for (int i = 0; i < images.size(); i++) {
+            MultipartFile file = images.get(i);
+            if (!file.isEmpty()) {
+                Map<String, String> uploaded = cloudinaryService.uploadImage(file, "products");
+                ProductImage img = new ProductImage();
+                img.setProduct(product); img.setImageUrl(uploaded.get("url"));
+                img.setPublicId(uploaded.get("publicId")); img.setDisplayOrder(nextOrder + i); img.setPrimary(false);
+                product.getImages().add(img);
+            }
+        }
+        if (product.getThumbnailUrl() == null || product.getThumbnailUrl().isBlank()) {
+            product.getImages().stream().sorted(Comparator.comparingInt(ProductImage::getDisplayOrder))
+                .findFirst().ifPresent(first -> product.setThumbnailUrl(first.getImageUrl()));
+        }
+        return toDetailResponse(productRepository.save(product));
+    }
+
+    @Override @Transactional
+    @CacheEvict(value = {"products:featured", "products:top-selling", "products:newest"}, allEntries = true)
+    public void deleteImage(Long productId, Long imageId) {
+        Product product = productRepository.findById(productId)
+            .orElseThrow(() -> new ResourceNotFoundException("Product", productId));
+        ProductImage image = productImageRepository.findByIdAndProductId(imageId, productId)
+            .orElseThrow(() -> new ResourceNotFoundException("Ảnh không tồn tại"));
+        if (image.getPublicId() != null) cloudinaryService.deleteImage(image.getPublicId());
+        product.getImages().remove(image);
+        // Update thumbnail if primary image removed
+        if (image.isPrimary() || product.getThumbnailUrl() != null && product.getThumbnailUrl().equals(image.getImageUrl())) {
+            product.getImages().stream().sorted(Comparator.comparingInt(ProductImage::getDisplayOrder))
+                .findFirst().ifPresentOrElse(
+                    first -> { first.setPrimary(true); product.setThumbnailUrl(first.getImageUrl()); },
+                    () -> product.setThumbnailUrl(null));
+        }
+        productRepository.save(product);
     }
 
     @Override @Transactional
