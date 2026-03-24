@@ -9,7 +9,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
@@ -63,10 +65,15 @@ public class AdminWebController {
         return "admin/product-form";
     }
 
+    @Transactional(readOnly = true)
     @GetMapping("/products/edit/{id}")
     public String editProductForm(@PathVariable Long id, Model model) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
+        
+        // Lazy initialization manually to fix "no session" error in Thymeleaf
+        product.getImages().size();
+        
         model.addAttribute("product", product);
         model.addAttribute("categories", categoryRepository.findAll());
         model.addAttribute("brands", brandRepository.findAll());

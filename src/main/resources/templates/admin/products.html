@@ -52,7 +52,7 @@
                     </td>
                     <td class="text-center" style="white-space: nowrap;">
                         <a th:href="@{/admin/products/edit/{id}(id=${p.id})}" class="btn btn-outline">Sửa</a>
-                        <button type="button" class="btn btn-danger"
+                        <button type="button" class="btn" style="background-color: #ef4444; color: white;"
                                 th:data-id="${p.id}" th:data-name="${p.name}"
                                 onclick="deleteProduct(this)">Xóa</button>
                     </td>
@@ -63,10 +63,24 @@
             </table>
 
             <div th:if="${products.totalPages > 1}" class="pagination">
-                <a th:each="i : ${#numbers.sequence(0, products.totalPages-1)}"
-                   th:href="@{/admin/products(page=${i}, keyword=${keyword})}"
-                   th:text="${i + 1}"
-                   th:classappend="${i == products.number} ? 'page-btn active' : 'page-btn'"></a>
+                <a th:if="${products.number > 0}"
+                   th:href="@{/admin/products(page=${products.number - 1}, keyword=${keyword})}"
+                   class="page-btn">&laquo;</a>
+                   
+                <th:block th:each="i : ${#numbers.sequence(0, products.totalPages - 1)}">
+                    <th:block th:if="${i == 0 or i == (products.totalPages - 1) or (i >= products.number - 2 and i <= products.number + 2)}">
+                        <a th:href="@{/admin/products(page=${i}, keyword=${keyword})}"
+                           th:text="${i + 1}"
+                           th:classappend="${i == products.number} ? 'page-btn active' : 'page-btn'"></a>
+                    </th:block>
+                    <th:block th:if="${(i == products.number - 3 and i > 0) or (i == products.number + 3 and i < products.totalPages - 1)}">
+                        <span class="page-btn" style="pointer-events: none; background: transparent; border-color: transparent;">...</span>
+                    </th:block>
+                </th:block>
+
+                <a th:if="${products.number < products.totalPages - 1}"
+                   th:href="@{/admin/products(page=${products.number + 1}, keyword=${keyword})}"
+                   class="page-btn">&raquo;</a>
             </div>
         </div>
     </main>
