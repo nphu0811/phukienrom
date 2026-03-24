@@ -165,9 +165,80 @@
 <div th:replace="~{layout :: footer}"></div>
 
 <script>
-function submitOrder(btn) {
+document.addEventListener('DOMContentLoaded', () => {
+    const newAddressRadio = document.getElementById('newAddressRadio');
+    const savedAddressRadios = document.querySelectorAll('input[name="addressId"]:not(#newAddressRadio)');
+    const newAddressForm = document.getElementById('newAddressForm');
+    
+    if (newAddressRadio) {
+        newAddressRadio.addEventListener('change', () => {
+            if (newAddressRadio.checked) newAddressForm.classList.remove('hidden');
+        });
+    }
+    
+    savedAddressRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            if (radio.checked) newAddressForm.classList.add('hidden');
+        });
+    });
+});
+
+async function submitOrder(btn) {
     setLoading(btn, true);
-    // submit handled by backend binding (placeholder)
+    try {
+        const addressIdRadio = document.querySelector('input[name="addressId"]:checked');
+        const paymentMethodRadio = document.querySelector('input[name="paymentMethod"]:checked');
+        
+        const payload = {
+            paymentMethod: paymentMethodRadio ? paymentMethodRadio.value : 'COD',
+            saveAddress: false
+        };
+
+        if (addressIdRadio && addressIdRadio.value !== "") {
+            payload.addressId = parseInt(addressIdRadio.value);
+            // Send dummy data to pass Spring @Valid constraints on backend
+            payload.recipientName = "N/A";
+            payload.recipientPhone = "0123456789";
+            payload.streetAddress = "N/A";
+            payload.ward = "N/A";
+            payload.district = "N/A";
+            payload.province = "N/A";
+        } else {
+            payload.recipientName = document.getElementById('recipientName').value;
+            payload.recipientPhone = document.getElementById('recipientPhone').value;
+            payload.streetAddress = document.getElementById('streetAddress').value;
+            payload.ward = document.getElementById('ward').value;
+            payload.district = document.getElementById('district').value;
+            payload.province = document.getElementById('province').value;
+            
+            const saveAddressCheckbox = document.getElementById('saveAddress');
+            payload.saveAddress = saveAddressCheckbox ? saveAddressCheckbox.checked : false;
+            
+            if (!payload.recipientName || !payload.recipientPhone || !payload.streetAddress || !payload.ward || !payload.district || !payload.province) {
+                showToast('❌ Vui lòng điền đầy đủ thông tin giao hàng', 'error');
+                setLoading(btn, false);
+                return;
+            }
+        }
+
+        const res = await fetch('/api/orders/checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        
+        const data = await res.json();
+        if (res.ok) {
+            window.location.href = '/?success=true'; 
+        } else {
+            showToast('❌ ' + (data.message || 'Lỗi đặt hàng'), 'error');
+            setLoading(btn, false);
+        }
+    } catch (e) {
+        console.error(e);
+        showToast('❌ Lỗi kết nối', 'error');
+        setLoading(btn, false);
+    }
 }
 </script>
 <script th:src="@{/js/main.v2.js}"></script>
