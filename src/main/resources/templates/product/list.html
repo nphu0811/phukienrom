@@ -162,5 +162,13 @@
 
 <div th:replace="~{layout :: footer}"></div>
 <script th:src="@{/js/main.v2.js}"></script>
+<script>
+    function changeSort(value) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('sort', value);
+        url.searchParams.set('page', '0');
+        window.location.href = url.toString();
+    }
+</script>
 </body>
 </html>
