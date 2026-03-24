@@ -1,5 +1,6 @@
 package com.example.demo.controller.web;
 import com.example.demo.domain.enums.OrderStatus;
+import com.example.demo.domain.entity.Product;
 import com.example.demo.repository.*;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.ProductService;
@@ -19,11 +20,15 @@ public class AdminWebController {
     private final UserRepository userRepository;
     private final OrderService orderService;
     private final ProductService productService;
+    private final CategoryRepository categoryRepository;
+    private final BrandRepository brandRepository;
 
     public AdminWebController(OrderRepository orderRepository, ProductRepository productRepository,
-                               UserRepository userRepository, OrderService orderService, ProductService productService) {
+                               UserRepository userRepository, OrderService orderService, ProductService productService,
+                               CategoryRepository categoryRepository, BrandRepository brandRepository) {
         this.orderRepository = orderRepository; this.productRepository = productRepository;
         this.userRepository = userRepository; this.orderService = orderService; this.productService = productService;
+        this.categoryRepository = categoryRepository; this.brandRepository = brandRepository;
     }
 
     @GetMapping({"", "/"})
@@ -47,6 +52,26 @@ public class AdminWebController {
         model.addAttribute("keyword", keyword);
         model.addAttribute("pageTitle", "Quản lý sản phẩm");
         return "admin/products";
+    }
+
+    @GetMapping("/products/create")
+    public String createProductForm(Model model) {
+        model.addAttribute("product", new Product());
+        model.addAttribute("categories", categoryRepository.findAll());
+        model.addAttribute("brands", brandRepository.findAll());
+        model.addAttribute("pageTitle", "Thêm sản phẩm mới");
+        return "admin/product-form";
+    }
+
+    @GetMapping("/products/edit/{id}")
+    public String editProductForm(@PathVariable Long id, Model model) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
+        model.addAttribute("product", product);
+        model.addAttribute("categories", categoryRepository.findAll());
+        model.addAttribute("brands", brandRepository.findAll());
+        model.addAttribute("pageTitle", "Sửa sản phẩm");
+        return "admin/product-form";
     }
 
     @GetMapping("/orders")

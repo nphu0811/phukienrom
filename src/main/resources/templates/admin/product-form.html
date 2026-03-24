@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Thêm/Sửa sản phẩm | Admin</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <div class="sidebar-logo">Phụ Kiện Rởm</div>
+        <a th:href="@{/admin}" class="admin-nav-link">Tổng quan</a>
+        <a th:href="@{/admin/orders}" class="admin-nav-link">Đơn hàng</a>
+        <a th:href="@{/admin/products}" class="admin-nav-link active">Sản phẩm</a>
+        <a th:href="@{/admin/users}" class="admin-nav-link">Người dùng</a>
+        <a th:href="@{/}" class="admin-nav-link mt-auto">Xem trang web</a>
+    </aside>
+
+    <main class="admin-main">
+        <div class="flex items-center justify-between mb-16">
+            <h1 class="h2" th:text="${pageTitle}">Sản phẩm</h1>
+            <a th:href="@{/admin/products}" class="btn btn-outline">Quay lại</a>
+        </div>
+
+        <div class="surface-card">
+            <form id="productForm" class="form-grid" th:data-id="${product.id}">
+                <div class="form-group col-span-2">
+                    <label class="form-label">Tên sản phẩm *</label>
+                    <input type="text" id="name" name="name" class="form-input" required th:value="${product.name}">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Danh mục *</label>
+                    <select id="categoryId" name="categoryId" class="form-input" required th:disabled="${product.id != null}">
+                        <option value="">-- Chọn danh mục --</option>
+                        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"
+                                th:selected="${product.category != null && product.category.id == cat.id}"></option>
+                    </select>
+                    <small class="text-muted" th:if="${product.id != null}">Không hỗ trợ đổi danh mục khi sửa.</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Thương hiệu *</label>
+                    <select id="brandId" name="brandId" class="form-input" required th:disabled="${product.id != null}">
+                        <option value="">-- Chọn thương hiệu --</option>
+                        <option th:each="br : ${brands}" th:value="${br.id}" th:text="${br.name}"
+                                th:selected="${product.brand != null && product.brand.id == br.id}"></option>
+                    </select>
+                    <small class="text-muted" th:if="${product.id != null}">Không hỗ trợ đổi thương hiệu khi sửa.</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Giá cơ bản (VNĐ) *</label>
+                    <input type="number" id="basePrice" name="basePrice" class="form-input" required min="0" th:value="${product.basePrice}">
+                </div>
+
+                <div class="form-group flex items-center" style="align-items: center; justify-content: flex-start; gap: 8px;">
+                    <input type="checkbox" id="featured" name="featured" th:checked="${product.featured}">
+                    <label for="featured" class="form-label m-0">Sản phẩm nổi bật</label>
+                </div>
+
+                <div class="form-group col-span-2" th:if="${product.id == null}">
+                    <label class="form-label">Hình ảnh *</label>
+                    <input type="file" id="images" name="images" class="form-input" multiple accept="image/*" required>
+                </div>
+                
+                <div class="form-group col-span-2">
+                    <label class="form-label">Mô tả ngắn</label>
+                    <textarea id="shortDescription" name="shortDescription" class="form-input" rows="3" th:text="${product.shortDescription}"></textarea>
+                </div>
+
+                <div class="form-group col-span-2">
+                    <label class="form-label">Mô tả chi tiết</label>
+                    <textarea id="description" name="description" class="form-input" rows="6" th:text="${product.description}"></textarea>
+                </div>
+
+                <div class="form-group col-span-2 mt-16">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Lưu sản phẩm</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+<script th:src="@{/js/main.v2.js}"></script>
+<script>
+    document.getElementById('productForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const submitBtn = document.getElementById('submitBtn');
+        const productId = form.dataset.id;
+        const isEdit = productId && productId !== 'null' && productId !== '';
+
+        setLoading(submitBtn, true);
+
+        try {
+            if (isEdit) {
+                // UpdateProductRequest supports name, shortDescription, description, basePrice, featured
+                const payload = {
+                    name: document.getElementById('name').value,
+                    shortDescription: document.getElementById('shortDescription').value,
+                    description: document.getElementById('description').value,
+                    basePrice: document.getElementById('basePrice').value,
+                    featured: document.getElementById('featured').checked
+                };
+
+                const res = await fetch(`/api/admin/products/${productId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                
+                if (res.ok) {
+                    showToast('✅ Cập nhật sản phẩm thành công', 'success');
+                    setTimeout(() => window.location.href = '/admin/products', 1500);
+                } else {
+                    let errMsg = data.message || 'Lỗi hệ thống';
+                    if (data.data) { // Handle validation errors maybe?
+                        const errs = Object.values(data.data).join(', ');
+                        if (errs) errMsg += ': ' + errs;
+                    }
+                    showToast('❌ ' + errMsg, 'error');
+                }
+            } else {
+                // Create uses FormData with 'data' as JSON blob and 'images' as files
+                const payload = {
+                    name: document.getElementById('name').value,
+                    categoryId: document.getElementById('categoryId').value,
+                    brandId: document.getElementById('brandId').value,
+                    shortDescription: document.getElementById('shortDescription').value,
+                    description: document.getElementById('description').value,
+                    basePrice: document.getElementById('basePrice').value,
+                    featured: document.getElementById('featured').checked
+                };
+
+                const formData = new FormData();
+                formData.append('data', new Blob([JSON.stringify(payload)], { type: 'application/json'}));
+                
+                const fileInput = document.getElementById('images');
+                if (fileInput.files.length > 0) {
+                    for (let i = 0; i < fileInput.files.length; i++) {
+                        formData.append('images', fileInput.files[i]);
+                    }
+                }
+
+                const res = await fetch('/api/admin/products', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                
+                if (res.ok) {
+                    showToast('✅ Thêm sản phẩm thành công', 'success');
+                    setTimeout(() => window.location.href = '/admin/products', 1500);
+                } else {
+                    let errMsg = data.message || 'Lỗi hệ thống';
+                    if (data.data) {
+                        const errs = Object.values(data.data).join(', ');
+                        if (errs) errMsg += ': ' + errs;
+                    }
+                    showToast('❌ ' + errMsg, 'error');
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            showToast('❌ Đã xảy ra lỗi mạng', 'error');
+        } finally {
+            setLoading(submitBtn, false);
+        }
+    });
+</script>
+</body>
+</html>
