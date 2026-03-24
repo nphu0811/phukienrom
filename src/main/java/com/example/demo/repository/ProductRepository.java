@@ -27,9 +27,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query(value = """
             SELECT p.* FROM products p
             JOIN categories c ON c.id = p.category_id
+            LEFT JOIN categories parent ON parent.id = c.parent_id
             JOIN brands b ON b.id = p.brand_id
             WHERE p.active = true
-            AND (CAST(:categorySlug AS text) IS NULL OR c.slug = :categorySlug)
+            AND (CAST(:categorySlug AS text) IS NULL OR c.slug = :categorySlug OR parent.slug = :categorySlug)
             AND (CAST(:brandSlug AS text) IS NULL OR b.slug = :brandSlug)
             AND (CAST(:minPrice AS numeric) IS NULL OR p.base_price >= CAST(:minPrice AS numeric))
             AND (CAST(:maxPrice AS numeric) IS NULL OR p.base_price <= CAST(:maxPrice AS numeric))
@@ -38,9 +39,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             countQuery = """
             SELECT COUNT(*) FROM products p
             JOIN categories c ON c.id = p.category_id
+            LEFT JOIN categories parent ON parent.id = c.parent_id
             JOIN brands b ON b.id = p.brand_id
             WHERE p.active = true
-            AND (CAST(:categorySlug AS text) IS NULL OR c.slug = :categorySlug)
+            AND (CAST(:categorySlug AS text) IS NULL OR c.slug = :categorySlug OR parent.slug = :categorySlug)
             AND (CAST(:brandSlug AS text) IS NULL OR b.slug = :brandSlug)
             AND (CAST(:minPrice AS numeric) IS NULL OR p.base_price >= CAST(:minPrice AS numeric))
             AND (CAST(:maxPrice AS numeric) IS NULL OR p.base_price <= CAST(:maxPrice AS numeric))

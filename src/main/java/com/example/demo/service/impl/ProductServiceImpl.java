@@ -45,6 +45,9 @@ public class ProductServiceImpl implements ProductService {
     @Override @Transactional(readOnly = true)
     public Page<ProductResponse> getProducts(String category, String brand,
             BigDecimal minPrice, BigDecimal maxPrice, String keyword, Pageable pageable) {
+        // Normalize blank strings to null so native query treats them as no filter
+        category = (category == null || category.isBlank()) ? null : category;
+        brand = (brand == null || brand.isBlank()) ? null : brand;
         String keywordParam = (keyword == null || keyword.isBlank()) 
             ? null 
             : "%" + keyword.toLowerCase() + "%";
