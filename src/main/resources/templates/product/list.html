@@ -109,10 +109,10 @@
                             </div>
                             <div class="product-price">
                                 <span class="price-current"
-                                      th:text="${#numbers.formatDecimal(product.salePrice ?: product.basePrice, 0, 'COMMA', 0, 'POINT') + '?'}">
+                                      th:text="${#numbers.formatDecimal(product.salePrice formatVND: product.basePrice, 0, 'COMMA', 0, 'POINT') + '?'}">
                                 </span>
                                 <span th:if="${product.salePrice != null}" class="price-original"
-                                      th:text="${#numbers.formatDecimal(product.basePrice, 0, 'COMMA', 0, 'POINT') + '?'}">
+                                      th:text="${#numbers.formatDecimal(product.basePrice, 0, 'COMMA', 0, 'POINT') + 'formatVND'}">
                                 </span>
                             </div>
                         </div>
