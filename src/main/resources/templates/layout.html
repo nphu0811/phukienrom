@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${pageTitle != null ? pageTitle + ' | PHỤ KIỆN RỞM' : 'PHỤ KIỆN RỞM - Điện thoại & Phụ kiện'}">Phụ Kiện Rởm</title>
-    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <!-- Cache-bust static assets to pick up latest CSS/JS -->
+    <link rel="stylesheet" th:href="@{/css/main.css?v=20260325}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Be+Vietnam+Pro:wght@700;800;900&display=swap" rel="stylesheet">
 </head>
@@ -215,9 +216,8 @@ function setLoading(btn, loading) {
     </div>
 </footer>
 
-<script th:src="@{/js/main.v2.js}"></script>
+<script th:src="@{/js/main.v2.js?v=20260325}"></script>
 </body>
 </html>
-
 
 
