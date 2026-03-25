@@ -257,3 +257,63 @@ async function updateOrderStatus(orderId, status) {
     showToast('âŒ ' + data.message, 'error');
   }
 }
+// —— Admin: user management ————————————————————————————
+async function adminUpdateUserRole(userId) {
+  const role = prompt('Nh?p vai trò m?i (CUSTOMER / STAFF / ADMIN):', 'CUSTOMER');
+  if (!role) return;
+  const normalized = role.trim().toUpperCase();
+  if (!['CUSTOMER', 'STAFF', 'ADMIN'].includes(normalized)) {
+    showToast('? Vai trò không h?p l?', 'error');
+    return;
+  }
+  const res = await fetch(`/api/admin/users/${userId}/role?role=${normalized}`, { method: 'PATCH' });
+  const data = await res.json();
+  if (res.ok) {
+    showToast('? Vai trò dã c?p nh?t', 'success');
+    setTimeout(() => location.reload(), 600);
+  } else {
+    showToast('? ' + (data.message || 'L?i'), 'error');
+  }
+}
+
+async function adminToggleUserActive(userId, active) {
+  const res = await fetch(`/api/admin/users/${userId}/deactivate?active=${active}`, { method: 'PATCH' });
+  const data = await res.json();
+  if (res.ok) {
+    showToast('? ' + data.message, 'success');
+    setTimeout(() => location.reload(), 600);
+  } else {
+    showToast('? ' + (data.message || 'L?i'), 'error');
+  }
+}
+
+async function adminResetPassword(userId) {
+  const pwd = prompt('Nh?p m?t kh?u m?i (>=6 ký t?):');
+  if (!pwd || pwd.length < 6) {
+    showToast('? M?t kh?u ph?i t? 6 ký t?', 'error');
+    return;
+  }
+  const res = await fetch(`/api/admin/users/${userId}/password`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ newPassword: pwd })
+  });
+  const data = await res.json();
+  if (res.ok) {
+    showToast('? Ðã d?i m?t kh?u', 'success');
+  } else {
+    showToast('? ' + (data.message || 'L?i'), 'error');
+  }
+}
+
+async function adminDeleteUser(userId) {
+  if (!confirm('Xóa ngu?i dùng này?')) return;
+  const res = await fetch(`/api/admin/users/${userId}`, { method: 'DELETE' });
+  const data = await res.json();
+  if (res.ok) {
+    showToast('? Ðã xóa ngu?i dùng', 'success');
+    setTimeout(() => location.reload(), 600);
+  } else {
+    showToast('? ' + (data.message || 'L?i'), 'error');
+  }
+}

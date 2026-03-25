@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đơn hàng | Staff</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <div>PHỤ KIỆN RƠM</div>
+        <a th:href="@{/staff/orders}" class="admin-nav-link active">Đơn hàng</a>
+        <a th:href="@{/}" class="admin-nav-link mt-auto">Xem trang web</a>
+    </aside>
+
+    <main class="admin-main">
+        <h1 class="h2 mb-16">Đơn hàng</h1>
+
+        <div class="btn-row mb-16">
+            <a th:href="@{/staff/orders}" class="btn btn-outline" th:classappend="${status == null} ? ' active' : ''">Tất cả</a>
+            <a th:each="s : ${statuses}"
+               th:href="@{/staff/orders(status=${s.name()})}"
+               th:text="${s.name()}"
+               class="btn btn-outline"
+               th:classappend="${status != null and status.name() == s.name()} ? ' btn-primary' : ''"></a>
+        </div>
+
+        <div class="surface-card">
+            <div class="text-muted mb-12" th:text="'Tổng ' + ${orders.totalElements} + ' đơn'"></div>
+            <div class="table-responsive">
+                <table class="table-simple">
+                    <tr>
+                        <th>Mã đơn</th>
+                        <th>Khách hàng</th>
+                        <th>Địa chỉ</th>
+                        <th class="text-right">Tổng tiền</th>
+                        <th class="text-center">Thanh toán</th>
+                        <th class="text-center">Trạng thái</th>
+                        <th>Thời gian</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                    <tr th:each="o : ${orders.content}">
+                        <td class="fw-700" th:text="${o.orderCode}"></td>
+                        <td>
+                            <div class="fw-700" th:text="${o.recipientName}"></div>
+                            <div class="caption" th:text="${o.recipientPhone}"></div>
+                        </td>
+                        <td class="caption maxw-200" th:text="${o.shippingAddress}"></td>
+                        <td class="text-right fw-700 text-primary"
+                            th:text="${#numbers.formatDecimal(o.totalAmount,0,'COMMA',0,'POINT') + '₫'}"></td>
+                        <td class="text-center caption" th:text="${o.paymentMethod}"></td>
+                        <td class="text-center">
+                            <span class="status-pill status-amber" th:text="${o.status}"></span>
+                        </td>
+                        <td class="caption" th:text="${#temporals.format(o.createdAt,'dd/MM/yyyy HH:mm')}"></td>
+                        <td class="text-center">
+                            <a th:href="@{/staff/orders/{id}(id=${o.id})}" class="btn btn-outline">Chi tiết</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${orders.totalElements == 0}">
+                        <td colspan="8" class="text-center text-muted py-10">Chưa có đơn hàng.</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div th:if="${orders.totalPages > 1}" class="pagination">
+                <a th:each="i : ${#numbers.sequence(0, orders.totalPages-1)}"
+                   th:href="@{/staff/orders(page=${i}, status=${status})}"
+                   th:text="${i + 1}"
+                   th:classappend="${i == orders.number} ? 'page-btn active' : 'page-btn'"></a>
+            </div>
+        </div>
+    </main>
+</div>
+<script th:src="@{/js/main.v2.js}"></script>
+</body>
+</html>
