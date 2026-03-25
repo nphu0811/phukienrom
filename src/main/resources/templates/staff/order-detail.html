@@ -27,9 +27,7 @@
                             th:text="${st.name()}"
                             th:selected="${st == order.status}"></option>
                 </select>
-                <button class="btn btn-primary update-status-btn">
-                    Xác nhận cập nhật
-                </button>
+                <button class="btn btn-primary" th:attr="onclick='updateOrderStatus(' + ${order.id} + ', document.getElementById(\'orderStatusSelect\').value)'">Xác nhận cập nhật</button>
             </div>
         </div>
 
