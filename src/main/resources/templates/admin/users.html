@@ -55,16 +55,16 @@
                         <td class="caption" th:text="${#temporals.format(u.createdAt,'dd/MM/yyyy')}"></td>
                         <td class="text-center">
                             <div class="btn-row justify-center" style="gap:6px; flex-wrap:wrap;">
-                                <button type="button" class="btn btn-sm btn-action-role"
+                                <button type="button" class="btn btn-action-role btn-sm"
                                         th:onclick="'adminUpdateUserRole(' + ${u.id} + ')'"
                                         title="Cập nhật vai trò">Sửa vai trò</button>
-                                <button type="button" class="btn btn-sm btn-action-pass"
+                                <button type="button" class="btn btn-action-pass btn-sm"
                                         th:onclick="'adminResetPassword(' + ${u.id} + ')'"
                                         title="Đổi mật khẩu">Đổi MK</button>
-                                <button type="button" class="btn btn-sm btn-action-lock"
+                                <button type="button" class="btn btn-action-lock btn-sm"
                                         th:onclick="'adminToggleUserActive(' + ${u.id} + ',' + ${!u.active} + ')'"
                                         th:text="${u.active} ? 'Khoá' : 'Mở khóa'"></button>
-                                <button type="button" class="btn btn-sm btn-action-delete"
+                                <button type="button" class="btn btn-action-delete btn-sm"
                                         th:onclick="'adminDeleteUser(' + ${u.id} + ')'"
                                         title="Xoá người dùng">Xoá</button>
                             </div>
