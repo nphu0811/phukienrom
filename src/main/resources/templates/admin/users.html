@@ -34,10 +34,10 @@
                         <th>Họ tên</th>
                         <th>Email</th>
                         <th>Điện thoại</th>
-                        <th class="text-center">Vai trò</th>
-                        <th class="text-center">Trạng thái</th>
+                        <th class="text-center">     Vai trò</th>
+                        <th class="text-center"> Trạng thái</th>
                         <th>Ngày đăng ký</th>
-                        <th class="text-center">Thao tác</th>
+                        <th class="text-center">        Thao tác</th>
                     </tr>
                     <tr th:each="u : ${users.content}">
                         <td class="caption" th:text="${u.id}"></td>
@@ -55,16 +55,16 @@
                         <td class="caption" th:text="${#temporals.format(u.createdAt,'dd/MM/yyyy')}"></td>
                         <td class="text-center">
                             <div class="btn-row justify-center" style="gap:6px; flex-wrap:wrap;">
-                                <button type="button" class="btn btn-outline btn-sm"
+                                <button type="button" class="btn btn-sm btn-action-role"
                                         th:onclick="'adminUpdateUserRole(' + ${u.id} + ')'"
                                         title="Cập nhật vai trò">Sửa vai trò</button>
-                                <button type="button" class="btn btn-sm"
+                                <button type="button" class="btn btn-sm btn-action-pass"
                                         th:onclick="'adminResetPassword(' + ${u.id} + ')'"
                                         title="Đổi mật khẩu">Đổi MK</button>
-                                <button type="button" class="btn btn-outline btn-sm"
+                                <button type="button" class="btn btn-sm btn-action-lock"
                                         th:onclick="'adminToggleUserActive(' + ${u.id} + ',' + ${!u.active} + ')'"
                                         th:text="${u.active} ? 'Khoá' : 'Mở khóa'"></button>
-                                <button type="button" class="btn btn-danger btn-sm"
+                                <button type="button" class="btn btn-sm btn-action-delete"
                                         th:onclick="'adminDeleteUser(' + ${u.id} + ')'"
                                         title="Xoá người dùng">Xoá</button>
                             </div>

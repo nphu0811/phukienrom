@@ -279,6 +279,16 @@ ul { list-style: none; }
 .btn-wishlist.active { border-color: var(--primary); color: var(--primary); background: var(--primary-soft); }
 .btn-wishlist:disabled { opacity: .5; cursor: not-allowed; }
 
+/* Admin user action buttons */
+.btn-action-role   { border: 2px solid #ffffff; color: #ffffff; background: transparent; }
+.btn-action-role:hover   { background: rgba(255,255,255,.08); }
+.btn-action-pass   { border: 2px solid #3b82f6; color: #ffffff; background: transparent; }
+.btn-action-pass:hover   { background: rgba(59,130,246,.12); }
+.btn-action-lock   { border: 2px solid #facc15; color: #ffffff; background: transparent; }
+.btn-action-lock:hover   { background: rgba(250,204,21,.12); }
+.btn-action-delete { border: 2px solid #f87171; color: #ffffff; background: transparent; }
+.btn-action-delete:hover { background: rgba(248,113,113,.12); }
+
 /* ══════════════════════ HERO ══════════════════════ */
 .hero { width: 100%; overflow: hidden; }
 .hero-slide { padding: 80px 0 72px; position: relative; }
