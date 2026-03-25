@@ -49,15 +49,17 @@ public class StaffWebController {
     @GetMapping("/orders/{id}")
     @Transactional(readOnly = true)
     public String orderDetail(@PathVariable Long id, Model model) {
-        Order order = orderRepository.findById(id)
+        try {
+            Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid order Id:" + id));
-
-        // initialize lazy relations used in view
-        order.getItems().size();
-
-        model.addAttribute("order", order);
-        model.addAttribute("statuses", OrderStatus.values());
-        model.addAttribute("pageTitle", "Chi tiết đơn hàng " + order.getOrderCode());
-        return "staff/order-detail";
+            order.getItems().size();
+            model.addAttribute("order", order);
+            model.addAttribute("statuses", OrderStatus.values());
+            model.addAttribute("pageTitle", "Chi tiết đơn hàng " + order.getOrderCode());
+            return "staff/order-detail";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", "Đơn hàng không tồn tại ID: " + id);
+            return "redirect:/staff/orders?error=order_not_found";
+        }
     }
 }

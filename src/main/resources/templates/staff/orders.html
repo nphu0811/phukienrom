@@ -27,7 +27,8 @@
         </div>
 
         <div class="surface-card">
-            <div class="text-muted mb-12" th:text="'Tổng ' + ${orders.totalElements} + ' đơn'"></div>
+        <div class="text-muted mb-12" th:if="${error}" th:text="'Lỗi: ' + ${error}" th:style="'color: red;'"></div>
+        <div class="text-muted mb-12" th:text="'Tổng ' + ${orders.totalElements} + ' đơn'"></div>
             <div class="table-responsive">
                 <table class="table-simple">
                     <tr>
