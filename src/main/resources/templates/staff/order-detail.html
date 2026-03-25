@@ -21,13 +21,13 @@
                 <h1 class="h2" th:text="'Chi tiết đơn hàng: ' + ${order.orderCode}"></h1>
             </div>
             <div>
-                <select class="form-input" id="orderStatusSelect" style="display:inline-block; width:auto;">
+                <select class="form-input" id="orderStatusSelect" th:attr="data-order-id=${order.id}" style="display:inline-block; width:auto;">
                     <option th:each="st : ${statuses}"
                             th:value="${st.name()}"
                             th:text="${st.name()}"
                             th:selected="${st == order.status}"></option>
                 </select>
-                <button class="btn btn-primary" th:onclick="'updateOrderStatus(' + ${order.id} + ', document.getElementById("orderStatusSelect").value)'">
+                <button class="btn btn-primary update-status-btn">
                     Xác nhận cập nhật
                 </button>
             </div>

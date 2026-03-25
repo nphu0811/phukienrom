@@ -244,7 +244,7 @@ async function toggleProductActive(id) {
   }
 }
 
-// â”€â”€ Admin: update order status â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â”€â”€ Admin/Staff: update order status â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function updateOrderStatus(orderId, status) {
   const res  = await fetch(`/api/admin/orders/${orderId}/status?status=${status}`, {
     method: 'PUT'
@@ -257,19 +257,31 @@ async function updateOrderStatus(orderId, status) {
     showToast('âŒ ' + data.message, 'error');
   }
 }
-// —— Admin: user management ————————————————————————————
+
+// â”€â”€ Auto-bind order status buttons on order-detail pages â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+document.addEventListener('DOMContentLoaded', function() {
+  const statusSelect = document.getElementById('orderStatusSelect');
+  const updateBtn = statusSelect ? statusSelect.parentElement.querySelector('button.btn-primary') : null;
+  if (statusSelect && updateBtn) {
+    const orderId = statusSelect.dataset.orderId || updateBtn.dataset.orderId;
+    if (orderId) {
+      updateBtn.addEventListener('click', () => updateOrderStatus(orderId, statusSelect.value));
+    }
+  }
+});
+// ï¿½ï¿½ Admin: user management ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 async function adminUpdateUserRole(userId) {
-  const role = prompt('Nh?p vai trò m?i (CUSTOMER / STAFF / ADMIN):', 'CUSTOMER');
+  const role = prompt('Nh?p vai trï¿½ m?i (CUSTOMER / STAFF / ADMIN):', 'CUSTOMER');
   if (!role) return;
   const normalized = role.trim().toUpperCase();
   if (!['CUSTOMER', 'STAFF', 'ADMIN'].includes(normalized)) {
-    showToast('? Vai trò không h?p l?', 'error');
+    showToast('? Vai trï¿½ khï¿½ng h?p l?', 'error');
     return;
   }
   const res = await fetch(`/api/admin/users/${userId}/role?role=${normalized}`, { method: 'PATCH' });
   const data = await res.json();
   if (res.ok) {
-    showToast('? Vai trò dã c?p nh?t', 'success');
+    showToast('? Vai trï¿½ dï¿½ c?p nh?t', 'success');
     setTimeout(() => location.reload(), 600);
   } else {
     showToast('? ' + (data.message || 'L?i'), 'error');
@@ -288,9 +300,9 @@ async function adminToggleUserActive(userId, active) {
 }
 
 async function adminResetPassword(userId) {
-  const pwd = prompt('Nh?p m?t kh?u m?i (>=6 ký t?):');
+  const pwd = prompt('Nh?p m?t kh?u m?i (>=6 kï¿½ t?):');
   if (!pwd || pwd.length < 6) {
-    showToast('? M?t kh?u ph?i t? 6 ký t?', 'error');
+    showToast('? M?t kh?u ph?i t? 6 kï¿½ t?', 'error');
     return;
   }
   const res = await fetch(`/api/admin/users/${userId}/password`, {
@@ -300,18 +312,18 @@ async function adminResetPassword(userId) {
   });
   const data = await res.json();
   if (res.ok) {
-    showToast('? Ðã d?i m?t kh?u', 'success');
+    showToast('? ï¿½ï¿½ d?i m?t kh?u', 'success');
   } else {
     showToast('? ' + (data.message || 'L?i'), 'error');
   }
 }
 
 async function adminDeleteUser(userId) {
-  if (!confirm('Xóa ngu?i dùng này?')) return;
+  if (!confirm('Xï¿½a ngu?i dï¿½ng nï¿½y?')) return;
   const res = await fetch(`/api/admin/users/${userId}`, { method: 'DELETE' });
   const data = await res.json();
   if (res.ok) {
-    showToast('? Ðã xóa ngu?i dùng', 'success');
+    showToast('? ï¿½ï¿½ xï¿½a ngu?i dï¿½ng', 'success');
     setTimeout(() => location.reload(), 600);
   } else {
     showToast('? ' + (data.message || 'L?i'), 'error');
