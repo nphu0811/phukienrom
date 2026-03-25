@@ -1,7 +1,9 @@
 package com.example.demo.dto.request;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Type-safe DTO for creating a product.
@@ -31,6 +33,9 @@ public class CreateProductRequest {
 
     private boolean featured = false;
 
+    @Valid
+    private List<VariantRequest> variants;
+
     public CreateProductRequest() {}
 
     public String getName() { return name; }
@@ -53,4 +58,7 @@ public class CreateProductRequest {
 
     public boolean isFeatured() { return featured; }
     public void setFeatured(boolean v) { this.featured = v; }
+
+    public List<VariantRequest> getVariants() { return variants; }
+    public void setVariants(List<VariantRequest> variants) { this.variants = variants; }
 }

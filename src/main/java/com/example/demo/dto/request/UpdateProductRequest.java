@@ -1,7 +1,9 @@
 package com.example.demo.dto.request;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Type-safe DTO for updating a product (all fields optional / patch-style).
@@ -23,6 +25,9 @@ public class UpdateProductRequest {
 
     private Boolean featured;
 
+    @Valid
+    private List<VariantRequest> variants;
+
     public UpdateProductRequest() {}
 
     public String getName() { return name; }
@@ -39,4 +44,7 @@ public class UpdateProductRequest {
 
     public Boolean getFeatured() { return featured; }
     public void setFeatured(Boolean v) { this.featured = v; }
+
+    public List<VariantRequest> getVariants() { return variants; }
+    public void setVariants(List<VariantRequest> variants) { this.variants = variants; }
 }

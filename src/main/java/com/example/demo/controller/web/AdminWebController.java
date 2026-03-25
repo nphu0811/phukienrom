@@ -73,6 +73,7 @@ public class AdminWebController {
         
         // Lazy initialization manually to fix "no session" error in Thymeleaf
         product.getImages().size();
+        product.getVariants().size();
         
         model.addAttribute("product", product);
         model.addAttribute("categories", categoryRepository.findAll());

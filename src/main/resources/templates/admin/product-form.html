@@ -105,6 +105,14 @@
                     <textarea id="description" name="description" class="form-input" rows="6" th:text="${product.description}"></textarea>
                 </div>
 
+                <!-- Phiên bản sản phẩm -->
+                <div class="form-group col-span-2">
+                    <label class="form-label">Phiên bản sản phẩm</label>
+                    <div id="variantList" class="flex-col" style="gap: 12px;"></div>
+                    <button type="button" class="btn btn-outline mt-8" onclick="addVariantRow()">+ Thêm phiên bản</button>
+                    <small class="text-muted">Điền SKU, màu/RAM/ROM, giá, tồn kho và URL ảnh (nếu có).</small>
+                </div>
+
                 <div class="form-group col-span-2 mt-16">
                     <button type="submit" class="btn btn-primary" id="submitBtn">Lưu sản phẩm</button>
                 </div>
@@ -113,7 +121,100 @@
     </main>
 </div>
 <script th:src="@{/js/main.v2.js}"></script>
-<script>
+<script th:inline="javascript">
+    const initialVariants = /*[[${product.variants}]]*/ [];
+
+    function addVariantRow(data = {}) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'variant-row surface-card';
+        wrapper.style.padding = '12px';
+        wrapper.style.display = 'grid';
+        wrapper.style.gap = '8px';
+        wrapper.style.gridTemplateColumns = 'repeat(auto-fit, minmax(140px, 1fr))';
+
+        wrapper.innerHTML = `
+            <div>
+                <label class="form-label">SKU *</label>
+                <input type="text" class="form-input variant-sku" value="${data.sku || ''}" required>
+            </div>
+            <div>
+                <label class="form-label">Màu</label>
+                <input type="text" class="form-input variant-color" value="${data.color || ''}">
+            </div>
+            <div>
+                <label class="form-label">RAM</label>
+                <input type="text" class="form-input variant-ram" value="${data.ram || ''}">
+            </div>
+            <div>
+                <label class="form-label">ROM</label>
+                <input type="text" class="form-input variant-rom" value="${data.rom || ''}">
+            </div>
+            <div>
+                <label class="form-label">Giá</label>
+                <input type="number" class="form-input variant-price" min="0" step="1000" value="${data.price ?? ''}">
+            </div>
+            <div>
+                <label class="form-label">Giá KM</label>
+                <input type="number" class="form-input variant-sale" min="0" step="1000" value="${data.salePrice ?? ''}">
+            </div>
+            <div>
+                <label class="form-label">Tồn kho</label>
+                <input type="number" class="form-input variant-stock" min="0" value="${data.stock ?? 0}">
+            </div>
+            <div>
+                <label class="form-label">Ảnh URL</label>
+                <input type="text" class="form-input variant-img" value="${data.imageUrl || ''}">
+            </div>
+            <div class="flex items-center" style="gap: 8px;">
+                <input type="checkbox" class="variant-active" ${data.active === false ? '' : 'checked'}>
+                <label class="form-label m-0">Kích hoạt</label>
+            </div>
+            <div class="flex items-center justify-end">
+                <button type="button" class="btn btn-outline" onclick="this.closest('.variant-row').remove()">Xóa</button>
+            </div>
+        `;
+        document.getElementById('variantList').appendChild(wrapper);
+    }
+
+    function collectVariants() {
+        const rows = document.querySelectorAll('.variant-row');
+        const variants = [];
+        rows.forEach(row => {
+            const sku = row.querySelector('.variant-sku').value.trim();
+            if (!sku) return;
+            variants.push({
+                sku,
+                color: row.querySelector('.variant-color').value.trim() || null,
+                ram: row.querySelector('.variant-ram').value.trim() || null,
+                rom: row.querySelector('.variant-rom').value.trim() || null,
+                price: row.querySelector('.variant-price').value || null,
+                salePrice: row.querySelector('.variant-sale').value || null,
+                stock: parseInt(row.querySelector('.variant-stock').value || '0'),
+                imageUrl: row.querySelector('.variant-img').value.trim() || null,
+                active: row.querySelector('.variant-active').checked
+            });
+        });
+        return variants;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (initialVariants && initialVariants.length > 0) {
+            initialVariants.forEach(v => addVariantRow({
+                sku: v.sku,
+                color: v.color,
+                ram: v.ram,
+                rom: v.rom,
+                price: v.price,
+                salePrice: v.salePrice,
+                stock: v.stock,
+                imageUrl: v.imageUrl,
+                active: v.active
+            }));
+        } else {
+            addVariantRow();
+        }
+    });
+
     async function removeImage(btn) {
         const productId = document.getElementById('productForm').dataset.id;
         const imageId = btn.dataset.imgId;
@@ -142,6 +243,11 @@
         const submitBtn = document.getElementById('submitBtn');
         const productId = form.dataset.id;
         const isEdit = productId && productId !== 'null' && productId !== '';
+        const variants = collectVariants();
+        if (variants.length === 0) {
+            showToast('⚠️ Vui lòng thêm ít nhất 1 phiên bản', 'error');
+            return;
+        }
 
         setLoading(submitBtn, true);
 
@@ -153,7 +259,8 @@
                     shortDescription: document.getElementById('shortDescription').value,
                     description: document.getElementById('description').value,
                     basePrice: document.getElementById('basePrice').value,
-                    featured: document.getElementById('featured').checked
+                    featured: document.getElementById('featured').checked,
+                    variants
                 };
 
                 const res = await fetch(`/api/admin/products/${productId}`, {
@@ -204,7 +311,8 @@
                     shortDescription: document.getElementById('shortDescription').value,
                     description: document.getElementById('description').value,
                     basePrice: document.getElementById('basePrice').value,
-                    featured: document.getElementById('featured').checked
+                    featured: document.getElementById('featured').checked,
+                    variants
                 };
 
                 const formData = new FormData();
@@ -245,4 +353,3 @@
 </script>
 </body>
 </html>
-

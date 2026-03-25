@@ -7,6 +7,7 @@ import com.example.demo.repository.*;
 import com.example.demo.service.CloudinaryService;
 import com.example.demo.dto.request.CreateProductRequest;
 import com.example.demo.dto.request.UpdateProductRequest;
+import com.example.demo.dto.request.VariantRequest;
 import com.example.demo.service.ProductService;
 import com.example.demo.util.SlugUtil;
 import org.springframework.cache.annotation.CacheEvict;
@@ -29,17 +30,20 @@ public class ProductServiceImpl implements ProductService {
     private final BrandRepository brandRepository;
     private final CloudinaryService cloudinaryService;
     private final ProductImageRepository productImageRepository;
+    private final ProductVariantRepository productVariantRepository;
 
     public ProductServiceImpl(ProductRepository productRepository,
                                CategoryRepository categoryRepository,
                                BrandRepository brandRepository,
                                CloudinaryService cloudinaryService,
-                               ProductImageRepository productImageRepository) {
+                               ProductImageRepository productImageRepository,
+                               ProductVariantRepository productVariantRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.brandRepository = brandRepository;
         this.cloudinaryService = cloudinaryService;
         this.productImageRepository = productImageRepository;
+        this.productVariantRepository = productVariantRepository;
     }
 
     @Override @Transactional(readOnly = true)
@@ -127,6 +131,9 @@ public class ProductServiceImpl implements ProductService {
                 product.setImages(productImages);
             }
         }
+
+        applyVariants(product, request.getVariants());
+
         Product saved = productRepository.save(product);
         log.info("Product created: " + saved.getName() + " id=" + saved.getId());
         return toDetailResponse(saved);
@@ -142,6 +149,9 @@ public class ProductServiceImpl implements ProductService {
         if (request.getDescription() != null) product.setDescription(request.getDescription());
         if (request.getBasePrice() != null) product.setBasePrice(request.getBasePrice());
         if (request.getFeatured() != null) product.setFeatured(request.getFeatured());
+
+        applyVariants(product, request.getVariants());
+
         return toDetailResponse(productRepository.save(product));
     }
 
@@ -204,6 +214,25 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Product", id));
         product.setActive(!product.isActive()); productRepository.save(product);
+    }
+
+    private void applyVariants(Product product, List<VariantRequest> variantRequests) {
+        if (variantRequests == null) return; // không thay đổi
+        product.getVariants().clear();
+        for (VariantRequest vrq : variantRequests) {
+            ProductVariant variant = new ProductVariant();
+            variant.setProduct(product);
+            variant.setSku(vrq.getSku());
+            variant.setRam(vrq.getRam());
+            variant.setRom(vrq.getRom());
+            variant.setColor(vrq.getColor());
+            variant.setPrice(vrq.getPrice() != null ? vrq.getPrice() : product.getBasePrice());
+            variant.setSalePrice(vrq.getSalePrice());
+            variant.setStock(vrq.getStock() != null ? vrq.getStock() : 0);
+            variant.setImageUrl(vrq.getImageUrl());
+            variant.setActive(vrq.getActive() == null || vrq.getActive());
+            product.getVariants().add(variant);
+        }
     }
 
     private ProductResponse toResponse(Product p) {
